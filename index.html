@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TAROT</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0b1533; --navy2:#16264f;
+    --ice:#cfe8ff; --ice2:#9fd0f5;
+    --silver:#dce8f4; --silver2:#aebfd6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    min-height:100vh;
+    background:linear-gradient(170deg,var(--navy) 0%,var(--navy2) 45%,#31527e 85%,#6f93b8 130%);
+    color:var(--ice);
+    font-family:'Zen Kaku Gothic New',sans-serif;
+    overflow-x:hidden;
+  }
+  .star{position:fixed;border-radius:50%;background:#fff;pointer-events:none;
+    animation:tw 3.5s infinite ease-in-out;opacity:0}
+  @keyframes tw{0%,100%{opacity:0}50%{opacity:.8}}
+  .shooting{position:fixed;top:12%;left:-10%;width:110px;height:1.5px;pointer-events:none;
+    background:linear-gradient(90deg,rgba(255,255,255,0),#fff);
+    transform:rotate(18deg);opacity:0;animation:shoot 11s infinite ease-in}
+  @keyframes shoot{0%,92%{opacity:0;left:-10%;top:10%}94%{opacity:.9}
+    100%{opacity:0;left:80%;top:38%}}
+
+  header{text-align:center;padding:52px 16px 24px}
+  h1{
+    font-family:'Cinzel',serif;font-size:2.1rem;letter-spacing:.35em;
+    background:linear-gradient(90deg,var(--ice),#fff,var(--silver2));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 0 24px rgba(170,210,255,.25);
+  }
+
+  .pray{
+    text-align:center;font-size:.8rem;color:#a8c4e4;
+    letter-spacing:.15em;padding:0 16px 14px;
+  }
+
+  .modes{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;padding:8px 16px 30px}
+  .modes button{
+    font-family:'Zen Kaku Gothic New';font-size:.9rem;letter-spacing:.08em;
+    padding:11px 22px;border-radius:999px;cursor:pointer;
+    color:var(--ice);background:rgba(255,255,255,.05);
+    border:1px solid rgba(190,215,240,.4);transition:.25s;
+  }
+  .modes button:hover,.modes button.on{
+    background:rgba(200,225,250,.16);
+    box-shadow:0 0 18px rgba(190,215,250,.35);color:#fff;
+  }
+
+  #board{max-width:860px;margin:0 auto;padding:0 14px 10px}
+  .hint{text-align:center;font-size:.78rem;color:#93b3d6;letter-spacing:.2em;
+    margin-bottom:22px;min-height:1em}
+  .row{display:flex;flex-wrap:wrap;justify-content:center;gap:18px}
+  .keywrap{margin-top:36px;display:flex;justify-content:center}
+
+  /* 伏せられたカード */
+  .tcard{transition:transform .28s ease, box-shadow .3s}
+  .tcard.facedown{
+    width:190px;height:290px;border-radius:14px;cursor:pointer;
+    border:1px solid rgba(200,220,245,.5);
+    background:
+      radial-gradient(circle at 22% 28%, rgba(255,255,255,.14) 0 1.4px, transparent 2px),
+      radial-gradient(circle at 74% 18%, rgba(255,255,255,.12) 0 1px, transparent 1.8px),
+      radial-gradient(circle at 60% 66%, rgba(255,255,255,.1) 0 1.2px, transparent 2px),
+      radial-gradient(circle at 32% 82%, rgba(255,255,255,.12) 0 1px, transparent 1.8px),
+      radial-gradient(circle at 85% 78%, rgba(255,255,255,.1) 0 1.3px, transparent 2px),
+      linear-gradient(160deg,#101c3e,#1a2c58 60%,#22355f);
+    box-shadow:0 6px 22px rgba(0,10,40,.55), inset 0 0 30px rgba(120,160,220,.12);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;
+  }
+  .tcard.facedown:hover{transform:translateY(-5px);
+    box-shadow:0 10px 28px rgba(80,140,220,.35)}
+  .tcard.facedown .glyph{font-size:1.7rem;color:#cfe2f8;text-shadow:0 0 14px rgba(180,215,255,.8)}
+  .tcard.facedown .poslabel{font-size:.68rem;letter-spacing:.28em;color:#8fb0d6}
+  .tcard.facedown.keyback{border:1px solid var(--silver);
+    box-shadow:0 0 24px rgba(215,230,248,.3), inset 0 0 30px rgba(160,190,230,.15)}
+
+  /* 開かれたカード */
+  .tcard.open{
+    width:250px;background:rgba(10,20,45,.6);
+    border:1px solid rgba(170,205,245,.45);border-radius:14px;
+    padding:18px;backdrop-filter:blur(4px);
+    box-shadow:0 4px 24px rgba(0,10,40,.5);cursor:default;
+  }
+  .tcard.open.key{
+    border:1px solid var(--silver);
+    box-shadow:0 0 26px rgba(215,230,250,.28);
+    background:rgba(18,26,52,.72);
+  }
+  .pos{font-size:.72rem;letter-spacing:.25em;color:#8fb6dd;margin-bottom:6px}
+  .open.key .pos{color:var(--silver)}
+  .cimg{width:50%;border-radius:8px;margin:6px auto 8px;display:block;
+    border:1px solid rgba(170,205,245,.3)}
+  .cimg.revimg{transform:rotate(180deg)}
+  .cname{font-family:'Cinzel',serif;font-size:1.05rem;color:#fff}
+  .cname small{display:block;font-size:.68rem;color:#a9c8ea;letter-spacing:.12em;margin-top:2px}
+  .dir{display:inline-block;margin:8px 0;font-size:.72rem;padding:2px 10px;border-radius:999px;
+    border:1px solid rgba(200,225,255,.4)}
+  .dir.rev{color:#f0c8c8;border-color:rgba(240,180,180,.5)}
+  .kw{font-size:.8rem;line-height:1.7;color:#bcd7f2}
+  .desc{margin-top:8px;font-size:.82rem;line-height:1.8;color:#e2eefb}
+  .desc .lbl{display:block;font-size:.65rem;letter-spacing:.22em;color:#8fb0d4;margin-bottom:3px}
+  .open.key .desc .lbl{color:var(--silver2)}
+  .personal{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(180,205,240,.35);
+    font-size:.82rem;line-height:1.7;color:var(--silver)}
+  .personal::before{content:"― わたしの読み";display:block;font-size:.66rem;
+    letter-spacing:.2em;color:var(--silver2);margin-bottom:4px}
+
+  .flipping{transform:scaleX(0)}
+  .rise{animation:rise .45s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+  /* ===== ケルティッククロス盤面 ===== */
+  .celtic{
+    display:grid;
+    grid-template-columns:repeat(3,84px) 84px;
+    grid-template-rows:repeat(4,126px);
+    gap:12px;justify-content:center;align-items:center;
+    margin:6px auto 8px;
+  }
+  .cpos5{grid-column:2;grid-row:1}
+  .cpos4{grid-column:1;grid-row:2}
+  .ccross{grid-column:2;grid-row:2;position:relative}
+  .cpos6{grid-column:3;grid-row:2}
+  .cpos3{grid-column:2;grid-row:3}
+  .cpos10{grid-column:4;grid-row:1}
+  .cpos9{grid-column:4;grid-row:2}
+  .cpos8{grid-column:4;grid-row:3}
+  .cpos7{grid-column:4;grid-row:4}
+
+  .mcard{
+    width:84px;height:126px;border-radius:8px;overflow:hidden;position:relative;
+    border:1px solid rgba(170,205,245,.5);
+    background:rgba(10,20,45,.65);
+    box-shadow:0 3px 12px rgba(0,10,40,.5);
+    animation:rise .5s ease both;
+  }
+  .mcard img{width:100%;height:100%;object-fit:cover;display:block}
+  .mcard.mrev img{transform:rotate(180deg)}
+  .mcard .mnum{
+    position:absolute;bottom:2px;right:5px;font-size:.62rem;color:#eaf3ff;
+    text-shadow:0 0 5px rgba(0,0,0,.9);font-family:'Cinzel',serif}
+  .mcard .mname{
+    display:none;width:100%;height:100%;padding:6px;text-align:center;
+    align-items:center;justify-content:center;font-size:.6rem;line-height:1.5;color:#cfe2f8}
+  .mcard.mrev .mname{transform:rotate(180deg)}
+  .mcard.crossed{
+    position:absolute;top:50%;left:50%;
+    transform:translate(-50%,-50%) rotate(90deg);
+    box-shadow:0 0 16px rgba(150,200,255,.4);
+  }
+  .legend{text-align:center;font-size:.7rem;color:#8fb0d6;letter-spacing:.12em;
+    margin:4px 0 26px;line-height:1.9}
+
+  /* 総合解説 */
+  #overall{max-width:720px;margin:44px auto 60px;padding:0 16px;display:none}
+  #overall.show{display:block;animation:rise .7s ease both}
+  #overall .panel{
+    background:rgba(14,22,46,.72);border:1px solid var(--silver2);
+    border-radius:16px;padding:26px 24px;
+    box-shadow:0 0 32px rgba(200,220,245,.18);backdrop-filter:blur(5px);
+  }
+  #overall h2{font-family:'Cinzel',serif;font-size:.95rem;letter-spacing:.35em;
+    color:var(--silver);text-align:center;margin-bottom:16px}
+  #overall p{font-size:.86rem;line-height:2;color:#dfeafb}
+
+  @media (max-width:560px){
+    .row{gap:12px}
+    .tcard.facedown{width:150px;height:230px}
+    .tcard.open{width:100%;max-width:340px}
+    .celtic{grid-template-columns:repeat(3,64px) 64px;grid-template-rows:repeat(4,96px);gap:8px}
+    .mcard{width:64px;height:96px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>TAROT</h1>
+</header>
+
+<p class="pray">占いたいことを思い浮かべながらタップしてください</p>
+
+<div class="modes">
+  <button id="btn1" onclick="drawOne()">ワンオラクル</button>
+  <button id="btn3" onclick="drawThree()">スリーカード</button>
+  <button id="btnC" onclick="drawCeltic()">じっくりタロット</button>
+</div>
+
+<div id="board"></div>
+<div id="overall"></div>
+
+<script>
+/* =====================================================
+   カードデータ 全78枚
+   keywords: 簡単な意味 / text: 状況の説明
+   keyHint: キーカード時のヒント / summary: 総合解説用
+   personal: わたしの読み(空欄は自由に追記)
+===================================================== */
+const CARDS = [
+/* ===== 大アルカナ ===== */
+{ id:0, name:"愚者", name_en:"The Fool", arcana:"major",
+  upright:{ keywords:"無限の可能性、自由、始まり、無邪気さ、冒険心。",
+    text:"何かが始まろうとしています。地図も装備も揃っていませんが、この段階で必要なのは完璧な計画ではなく、一歩目を踏み出す軽さです。周囲の心配より、あなた自身のわくわくを信じてよい時です。",
+    keyHint:"「まだ形になっていないもの」「常識の外にある選択肢」に注目して、他のカードを読み直してみてください。",
+    summary:"新しい旅の入り口に立っていること",
+    personal:"損得を計算する前に足が出てる状態。準備万端じゃないことがむしろ強み。" },
+  reversed:{ keywords:"無謀、軽率、無計画、リスクの見落とし。",
+    text:"勢いだけで進んでしまい、足元が見えていないかもしれません。自由と無責任の境目が曖昧になっているサインです。止まるのではなく、靴ひもを結び直す程度の確認を。",
+    keyHint:"「見落としているリスク」「軽く扱いすぎている約束事」が読み解きの鍵になります。",
+    summary:"勢い任せで足元が疎かになっていること", personal:"" } },
+{ id:1, name:"魔術師", name_en:"The Magician", arcana:"major",
+  upright:{ keywords:"創造、意志の力、実現、才能、集中。",
+    text:"必要な道具はすでに手元に揃っています。あとは意志を一点に集めて「やる」と決めるだけの状況です。思い描いたものを現実に変換する力が、今のあなたには通っています。",
+    keyHint:"「すでに持っている資源・スキル」を軸に他のカードを読むと、話がつながります。",
+    summary:"手持ちの力で現実を動かせる状態にあること", personal:"" },
+  reversed:{ keywords:"準備不足、才能の浪費、口先だけ、迷い。",
+    text:"できるはずのことが、集中の分散や自信のなさで形になっていないようです。言葉が先行して手が止まっていないか振り返ってみてください。小さくてもひとつ「完成させる」ことが流れを戻します。",
+    keyHint:"「言っているだけで着手していないこと」がどこにあるかを探してください。",
+    summary:"力はあるのに焦点が定まっていないこと", personal:"" } },
+{ id:2, name:"女教皇", name_en:"The High Priestess", arcana:"major",
+  upright:{ keywords:"直感、知恵、静けさ、秘密、内なる声。",
+    text:"答えは外ではなく、すでにあなたの内側にあります。行動よりも観察と沈黙が実を結ぶ時期です。「なんとなく気になる」という微かな感覚を、根拠がないからと切り捨てないでください。",
+    keyHint:"「言葉になっていない違和感・直感」を手がかりに全体を読み直すと像が結ばれます。",
+    summary:"静かに感じ取る局面にいること", personal:"" },
+  reversed:{ keywords:"秘密の露呈、直感の無視、感情の抑圧。",
+    text:"頭で考えすぎて、心のサインを塞いでいるかもしれません。あるいは隠していたことが表に出やすいタイミングです。抑え込んだ感情は消えずに溜まります。安全な場所で少しずつ出してあげてください。",
+    keyHint:"「見ないふりをしているもの」が、他のカードの意味を歪めている可能性があります。",
+    summary:"内なる声に蓋をしていること", personal:"" } },
+{ id:3, name:"女帝", name_en:"The Empress", arcana:"major",
+  upright:{ keywords:"豊かさ、愛情、母性、創造性、実り。",
+    text:"育ててきたものが実りに向かっています。効率や競争ではなく、受け取ること・味わうことが今のテーマです。自分にも他人にも、少し甘くていい時期だと思ってください。",
+    keyHint:"「育ちつつあるもの」「与えられている愛情」に光を当てて読むと、全体が柔らかく繋がります。",
+    summary:"実りと愛情に恵まれた流れの中にいること", personal:"" },
+  reversed:{ keywords:"過保護、怠惰、依存、浪費。",
+    text:"与えすぎ、あるいは受け取りすぎでバランスが崩れ気味です。優しさが相手や自分の成長を止めていないか、静かに点検を。「世話を焼く」と「信じて任せる」の配分を見直す時です。",
+    keyHint:"「甘やかしすぎているもの」「頼りすぎているもの」がどれかを見極めてください。",
+    summary:"愛情の与え方・受け取り方が偏っていること", personal:"" } },
+{ id:4, name:"皇帝", name_en:"The Emperor", arcana:"major",
+  upright:{ keywords:"安定、責任、統率、達成、揺るがない基盤。",
+    text:"感情ではなく構造で物事を支える力が求められています。ルールを決める、境界線を引く、責任を引き受ける──そうした「硬い」動きが今は正解です。積み上げてきた実績があなたの土台になっています。",
+    keyHint:"「秩序・ルール・責任の所在」という視点で他のカードを整列させてみてください。",
+    summary:"土台を固め、舵を握るべき局面であること", personal:"" },
+  reversed:{ keywords:"頑固、傲慢、支配のしすぎ、責任の放棄。",
+    text:"コントロールへのこだわりが、柔軟さを奪っているかもしれません。あるいは背負うべき責任から目を逸らしているサインでもあります。「正しさ」より「機能しているか」で判断し直してみてください。",
+    keyHint:"「握りしめすぎている主導権」または「投げ出している責任」が鍵です。",
+    summary:"支配と放棄のあいだで舵が傾いていること", personal:"" } },
+{ id:5, name:"教皇", name_en:"The Hierophant", arcana:"major",
+  upright:{ keywords:"伝統、道徳、助言、信頼、精神的な支え。",
+    text:"先人の知恵や、信頼できる人の助言が力を持つ時です。自己流で突破するより、確立されたやり方に一度乗ってみる価値があります。「教わる」ことは弱さではなく、最短の賢さです。",
+    keyHint:"「誰かの助言」「既にある型」を補助線にすると、他のカードの意味が定まります。",
+    summary:"信頼できる導きに支えられていること", personal:"" },
+  reversed:{ keywords:"形式主義、束縛、視野の狭さ、権威への反発。",
+    text:"「こうあるべき」が重くのしかかっているようです。慣習やルールが本来の目的を離れて形骸化していないでしょうか。従うか反発するかの二択ではなく、「自分にとって生きた形」に作り替える道があります。",
+    keyHint:"「疑わずに従っている前提」を一度ひっくり返して読み直してみてください。",
+    summary:"古い型が窮屈になり始めていること", personal:"" } },
+{ id:6, name:"恋人", name_en:"The Lovers", arcana:"major",
+  upright:{ keywords:"選択、愛、調和、共感、心の結びつき。",
+    text:"心が「こちら」と告げている選択があるはずです。条件の比較ではなく、価値観の一致で選んでよい局面です。人との結びつきが深まり、共鳴が追い風になります。",
+    keyHint:"「心が既に選んでいるもの」を認めた上で、他のカードをその選択の補強材料として読んでください。",
+    summary:"心からの選択と結びつきが主題であること", personal:"" },
+  reversed:{ keywords:"誘惑、迷い、不誠実、決断の先送り。",
+    text:"決めきれずに宙吊りの状態が続いているようです。楽な方・目先の甘さに流されると、後で同じ選択がもっと重くなって戻ってきます。「選ばないこと」もひとつの選択として代償を持つことを思い出してください。",
+    keyHint:"「先送りにしている決断」が全体の停滞の根にないか確かめてください。",
+    summary:"決断の先送りが澱みを生んでいること", personal:"" } },
+{ id:7, name:"戦車", name_en:"The Chariot", arcana:"major",
+  upright:{ keywords:"前進、勝利、意志の力、行動力、困難の克服。",
+    text:"迷いを振り切って進むフェーズです。相反する力(理性と感情、慎重さと大胆さ)を両方乗りこなしたとき、突破力が最大になります。スピードが味方する時期なので、考えすぎによる失速に注意を。",
+    keyHint:"「前進を阻んでいるブレーキは何か」という問いで他のカードを読むと、動きが見えます。",
+    summary:"突破と前進の勢いが来ていること", personal:"" },
+  reversed:{ keywords:"暴走、挫折、コントロールの喪失、方向性の迷い。",
+    text:"アクセルとハンドルが噛み合っていないようです。頑張っているのに進まない時は、力不足ではなく方向の問題であることが多いもの。一度停車して、行き先の再設定を。",
+    keyHint:"「速度」ではなく「方向」に問題がないか、他のカードで確かめてください。",
+    summary:"進む力が空回りしていること", personal:"" } },
+{ id:8, name:"力", name_en:"Strength", arcana:"major",
+  upright:{ keywords:"内なる強さ、忍耐、勇気、優しさによる制御。",
+    text:"力ずくではなく、穏やかさで手なずける強さが発揮されています。恐れや衝動を消すのではなく、共存させながら進む──それができているのは相当な成熟です。焦らず、静かな胆力を信じてください。",
+    keyHint:"「抑え込むのではなく、飼いならすべき衝動・恐れ」は何かを軸に読んでください。",
+    summary:"静かな胆力で状況を御していること", personal:"" },
+  reversed:{ keywords:"無力感、自信喪失、感情の暴走、力ずくの空回り。",
+    text:"自分を信じる力が目減りして、感情に振り回されやすくなっています。ここで必要なのは気合ではなく回復です。強がるより、疲れを認めるほうが早く立て直せます。",
+    keyHint:"「消耗の源」がどこにあるかを、他のカードから探してみてください。",
+    summary:"心の体力が削られていること", personal:"" } },
+{ id:9, name:"隠者", name_en:"The Hermit", arcana:"major",
+  upright:{ keywords:"内省、探求、静かな時間、内なる導き。",
+    text:"群れを離れて、自分のランタンひとつで歩く時期です。孤独は罰ではなく、深く考えるための環境。答えを外に求めるほど遠ざかる問いに、今は向き合えています。",
+    keyHint:"「一人で静かに考えるべき問い」を中心に据えると、他のカードが助言に変わります。",
+    summary:"内側へ潜る時間が必要であること", personal:"" },
+  reversed:{ keywords:"孤立、閉じこもり、頑固、現実からの逃避。",
+    text:"内省が行き過ぎて、外との回路が細くなっているかもしれません。「一人で考える」と「一人で抱え込む」は似て非なるものです。信頼できる誰かに、途中経過のままでいいので話してみてください。",
+    keyHint:"「閉じすぎている扉」がどこかを意識して、他のカードを読み直してください。",
+    summary:"内省が孤立に傾きかけていること", personal:"" } },
+{ id:10, name:"運命の輪", name_en:"Wheel of Fortune", arcana:"major",
+  upright:{ keywords:"転機、幸運、流れの変化、巡ってくるチャンス。",
+    text:"自分の努力の外側から、流れそのものが変わろうとしています。回り始めた輪は止められませんが、乗ることはできます。「たまたま」を軽視せず、巡ってきた偶然に手を伸ばしてください。",
+    keyHint:"「自力ではどうにもならない流れ」と「その流れへの乗り方」を分けて読むのが鍵です。",
+    summary:"流れが変わる転機が来ていること", personal:"" },
+  reversed:{ keywords:"停滞、タイミングのずれ、流れへの抵抗。",
+    text:"頑張りと結果が噛み合わないのは、時期がまだ来ていないだけかもしれません。無理にこじ開けるより、次の機会に備える準備に力を使うほうが賢明です。",
+    keyHint:"「今は動かすべきでないもの」を見分けることが読み解きの中心になります。",
+    summary:"タイミングがまだ整っていないこと", personal:"" } },
+{ id:11, name:"正義", name_en:"Justice", arcana:"major",
+  upright:{ keywords:"公平、均衡、誠実、因果、正しい判断。",
+    text:"感情を脇に置き、事実と筋道で判断すべき局面です。これまでの行いに応じた結果が返ってくる時でもあります。誠実さは遠回りに見えて、最終的に一番強い交渉材料になります。",
+    keyHint:"「フェアかどうか」「原因と結果の対応」という物差しで他のカードを測ってください。",
+    summary:"公正な判断と清算が求められていること", personal:"" },
+  reversed:{ keywords:"不公平、偏った見方、責任逃れ、裁きの遅れ。",
+    text:"天秤がどちらかに傾いています。自分に甘く他人に厳しく(あるいはその逆)なっていないでしょうか。正しさを主張する前に、見えていない側の皿に何が載っているかを確認してください。",
+    keyHint:"「片側からしか見ていない事柄」を探すと、詰まりの正体が見えます。",
+    summary:"見方が片側に傾いていること", personal:"" } },
+{ id:12, name:"吊るされた男", name_en:"The Hanged Man", arcana:"major",
+  upright:{ keywords:"忍耐、視点の転換、自己犠牲、停滞の中の学び。",
+    text:"動けない時期ですが、無駄な時間ではありません。逆さまになったからこそ見える景色があります。「進めない」を「視点を変える猶予」と読み替えられたら、この停滞は投資に変わります。",
+    keyHint:"「逆さまから見たらどう見えるか」を全カードに適用してみてください。",
+    summary:"動けなさの中に学びがある時期であること", personal:"" },
+  reversed:{ keywords:"無駄な犠牲、徒労、視野の狭まり、動けない焦り。",
+    text:"耐えることが目的化して、何のための我慢か分からなくなっていませんか。実を結ばない犠牲は美徳ではなく消耗です。「降りる」という選択肢を、敗北ではなく判断として持ってください。",
+    keyHint:"「続ける意味を失った我慢」がどれかを見極めるのが鍵です。",
+    summary:"報われない我慢に絡め取られていること", personal:"" } },
+{ id:13, name:"死神", name_en:"Death", arcana:"major",
+  upright:{ keywords:"終わりと再生、変容、手放し、大きな区切り。",
+    text:"ひとつの章が終わろうとしています。それは喪失であると同時に、次の章の必要条件です。終わりを引き延ばすほど再生も遅れます。丁寧に、しかしはっきりと幕を引くことが、次に進む一番の近道です。",
+    keyHint:"「終わらせるべきもの」と「その先に生まれるもの」のペアで他のカードを読んでください。",
+    summary:"大きな区切りと再生の途上にあること", personal:"" },
+  reversed:{ keywords:"執着、停滞、変化への抵抗、終わらせられない状態。",
+    text:"もう役目を終えたものを、手放せずにいるようです。しがみつく手を緩めるのが怖いのは自然なことですが、握ったままでは新しいものを掴めません。少しずつ、指一本ずつでかまいません。",
+    keyHint:"「終わっているのに続けているもの」が全体の重石になっていないか確認を。",
+    summary:"過ぎたものへの執着が流れを堰き止めていること", personal:"" } },
+{ id:14, name:"節制", name_en:"Temperance", arcana:"major",
+  upright:{ keywords:"調和、節度、循環、異なるものの融合、癒し。",
+    text:"極端に振れず、混ぜ合わせ、流れを整える時期です。相反するもの(仕事と休息、理想と現実)の配合を微調整することで、思った以上の安定が得られます。派手さはないが確実に効く処方です。",
+    keyHint:"「混ぜるべき二つのもの」「調整すべき配分」という視点が読み解きの軸になります。",
+    summary:"配分の調整と回復が進んでいること", personal:"" },
+  reversed:{ keywords:"不摂生、アンバランス、消耗、噛み合わない歯車。",
+    text:"どこかの配分が崩れて、循環が滞っています。頑張りすぎか、緩みすぎか、その両方の交互かもしれません。大改革ではなく「一箇所だけ整える」ことから始めると、連鎖的に戻っていきます。",
+    keyHint:"「過剰なもの」と「不足しているもの」の組を探してください。",
+    summary:"バランスの崩れが消耗を生んでいること", personal:"" } },
+{ id:15, name:"悪魔", name_en:"The Devil", arcana:"major",
+  upright:{ keywords:"誘惑、執着、欲望、束縛、断ち切れない習慣。",
+    text:"分かっているのにやめられない何かに、鎖で繋がれている状態です。ただしよく見ると、その鎖は外せる緩さで掛かっています。意志の弱さを責めるより、鎖の仕組み(何が引き金か)を観察するほうが有効です。",
+    keyHint:"「自分を縛っているが、実は外せるもの」を特定することが読み解きの核心です。",
+    summary:"自覚ある束縛に繋がれていること", personal:"" },
+  reversed:{ keywords:"解放、悪循環からの脱出、目覚め、鎖を外す。",
+    text:"長く続いた悪循環から、抜け出す力が戻ってきています。完全に断ち切れなくても、距離を取れるようになったこと自体が大きな前進です。戻りそうになる日があっても、それは失敗ではなく過程です。",
+    keyHint:"「緩み始めた鎖」を確認し、他のカードを回復の道筋として読んでください。",
+    summary:"束縛から抜け出す力が戻っていること", personal:"" } },
+{ id:16, name:"塔", name_en:"The Tower", arcana:"major",
+  upright:{ keywords:"崩壊、衝撃、覆る前提、避けられない変化。",
+    text:"積み上げた前提が、外からの衝撃で崩れる局面です。痛みは本物ですが、崩れたのは「歪んだ土台の上の建物」であることが多い。更地は喪失であると同時に、初めて正しく建て直せる場所でもあります。",
+    keyHint:"「崩れて当然だった前提」は何かを問うと、他のカードが再建の設計図になります。",
+    summary:"古い前提が崩れる激動の中にいること", personal:"" },
+  reversed:{ keywords:"崩壊の予兆、ぎりぎりの回避、引き延ばされる痛み。",
+    text:"亀裂に気づきながら、目を逸らして持ちこたえている状態かもしれません。倒壊を先送りにするほど、修繕の選択肢は減っていきます。怖くても、ひびの入った箇所を自分から点検するほうが被害は小さく済みます。",
+    keyHint:"「見て見ぬふりをしている亀裂」がどこかを探すのが読み解きの鍵です。",
+    summary:"限界の先送りが続いていること", personal:"" } },
+{ id:17, name:"星", name_en:"The Star", arcana:"major",
+  upright:{ keywords:"希望、癒し、ひらめき、未来への信頼。",
+    text:"嵐のあとの、静かな夜空のような時期です。すぐに現実が変わるわけではなくても、目指す方向ははっきり見えています。焦らず、今できる小さな行動を続けてください。回復と着想の両方が育つ時です。",
+    keyHint:"「遠くに見えている目標・希望」を基準点に、他のカードまでの道のりを読んでください。",
+    summary:"希望と回復の見通しが立ち始めていること", personal:"" },
+  reversed:{ keywords:"失望、理想と現実の乖離、悲観、希望の見失い。",
+    text:"目標が見えなくなっているのは、目標が消えたからではなく、疲れで視界が曇っているだけかもしれません。理想と現在地の落差がきついなら、目標を諦めるのではなく中継地点を増やしてください。",
+    keyHint:"「高すぎる理想」と「現在地」のあいだに何が足りないかを探してください。",
+    summary:"目標が一時的に見えにくくなっていること", personal:"" } },
+{ id:18, name:"月", name_en:"The Moon", arcana:"major",
+  upright:{ keywords:"不安、曖昧さ、幻想、潜在意識、揺らぎ。",
+    text:"輪郭のはっきりしない不安が漂う時期です。情報が足りない状態では、想像が最悪の方向に膨らみがちです。今見えている「最悪の予想」は、事実というより疲れと不確かさの産物かもしれません。重大な判断は、状況がはっきりするまで保留が得策です。",
+    keyHint:"「事実」と「想像で膨らんだ部分」を仕分けながら他のカードを読んでください。",
+    summary:"曖昧さと不安の霧の中にいること", personal:"" },
+  reversed:{ keywords:"霧が晴れる、不安の解消、隠れていたものの露呈。",
+    text:"長かった夜が明け始めています。正体不明だった不安の輪郭が見え、対処可能な形に変わっていきます。隠れていた事実が出てくることもありますが、それは霧の中を歩き続けるよりずっと良いことです。",
+    keyHint:"「明らかになりつつあること」を軸に、全体を夜明けの物語として読んでください。",
+    summary:"霧が晴れ、実像が見え始めていること", personal:"" } },
+{ id:19, name:"太陽", name_en:"The Sun", arcana:"major",
+  upright:{ keywords:"成功、生命力、祝福、明るさ、素直な喜び。",
+    text:"隠すもののない、まっすぐな成功と喜びの時です。難しく考える必要はありません。楽しいものを楽しい、嬉しいものを嬉しいと言ってよい──その素直さが人を集め、次の機会も連れてきます。",
+    keyHint:"「すでにうまくいっているもの」を起点に、他のカードを発展の物語として読んでください。",
+    summary:"生命力に満ちた好調期であること", personal:"" },
+  reversed:{ keywords:"自信の陰り、延期、曇りがちな気分、空元気。",
+    text:"本来の調子が、疲れや遠慮で少し落ちています。失われたわけではなく、一時的に出せていないだけです。無理に明るく振る舞うより、小さな楽しみを具体的に予定へ入れて補給してください。",
+    keyHint:"「空元気で覆っている本音」がどこにあるかを見てください。",
+    summary:"本来の調子が一時的に落ちていること", personal:"" } },
+{ id:20, name:"審判", name_en:"Judgement", arcana:"major",
+  upright:{ keywords:"復活、覚醒、再評価、答えを出すとき。",
+    text:"一度終わったと思っていたものが、形を変えて呼び戻される時です。過去の経験・挫折・保留にした夢が、今のあなたなら扱える課題として再登場します。応えるかどうか、返事を出す時です。",
+    keyHint:"「もう一度チャンスが来ているもの」を中心に据えて全体を読んでください。",
+    summary:"再起と決着の機会が来ていること", personal:"" },
+  reversed:{ keywords:"後悔、過去への執着、チャンスの見送り。",
+    text:"過去の判断を悔やむ声が大きくなって、今の機会が見えにくくなっています。過去は変えられませんが、過去の「意味」はこれからの行動で書き換えられます。うつむいたままだと、二度目の機会も見逃します。",
+    keyHint:"「後悔に使っている時間」が「次の機会」を覆い隠していないか確認してください。",
+    summary:"過去への後悔が現在の機会を遮っていること", personal:"" } },
+{ id:21, name:"世界", name_en:"The World", arcana:"major",
+  upright:{ keywords:"完成、統合、達成、円満、ひとつの物語の結び。",
+    text:"長い道のりが、ひとつの完成形にたどり着きます。バラバラだった要素が噛み合い、円が閉じる感覚があるはずです。達成を十分に味わってください。次の物語は、この円の外側から始まります。",
+    keyHint:"「完成に近づいているもの」を終着点として、他のカードをそこまでの道程として読んでください。",
+    summary:"ひとつの物語が円満な完成を迎えること", personal:"" },
+  reversed:{ keywords:"未完成、あと一歩、閉じた世界、詰めの甘さ。",
+    text:"9割まで来ているのに、最後のピースが嵌っていない状態です。原因は能力ではなく、「終わらせることへのためらい」かもしれません。完成させると次が始まってしまう──その怖さごと認めて、残りの一歩を。",
+    keyHint:"「あと一歩で止まっているもの」と「止まっている本当の理由」を探してください。",
+    summary:"完成目前の足踏みが続いていること", personal:"" } },
+
+/* ===== ワンド ===== */
+{ id:22, name:"ワンドのエース", name_en:"Ace of Wands", arcana:"minor", suit:"wands",
+  upright:{ keywords:"情熱の芽生え、創造の火種、直感的な始まり。",
+    text:"心の中に小さな火が灯った状態です。理屈より先に「やってみたい」が来ているなら、その熱が冷めないうちに最初の一手を打ってください。",
+    keyHint:"「新しく灯った熱意」を起点に他のカードを読んでください。",
+    summary:"新しい情熱が灯り始めていること", personal:"" },
+  reversed:{ keywords:"意欲の低下、空回り、出だしの遅れ。",
+    text:"火種はあるのに風が通らず、くすぶっています。大きく燃やそうとせず、まず薪を一本(小さな行動)足すことから始めてください。",
+    keyHint:"「くすぶったままの意欲」がどこにあるかを探してください。",
+    summary:"熱意がくすぶって形にならないこと", personal:"" } },
+{ id:23, name:"ワンドの2", name_en:"Two of Wands", arcana:"minor", suit:"wands",
+  upright:{ keywords:"展望、計画、選択肢の検討。",
+    text:"手にした成果を眺めながら、次の一手を考える段階です。世界は思っているより広く、選択肢はまだ増やせます。地図を広げる時間を惜しまないで。",
+    keyHint:"「次にどこへ向かうか」という問いを軸に他のカードを読んでください。",
+    summary:"次の展望を描いている段階であること", personal:"" },
+  reversed:{ keywords:"優柔不断、視野の狭さ、現状維持。",
+    text:"安全圏から出るのが怖くて、決断が延びています。完璧な計画を待つより、小さく試すほうが視界は開けます。",
+    keyHint:"「安全圏に留まらせているもの」を探してください。",
+    summary:"踏み出せない足踏みが続いていること", personal:"" } },
+{ id:24, name:"ワンドの3", name_en:"Three of Wands", arcana:"minor", suit:"wands",
+  upright:{ keywords:"拡大、協力、遠くを見据えた期待。",
+    text:"打った手が動き出し、結果を待つ時期です。焦らず、視線は遠くに保ったままで。動き出した流れを信じてよい段階です。",
+    keyHint:"「すでに動き出しているもの」を軸に読んでください。",
+    summary:"蒔いた種が動き出していること", personal:"" },
+  reversed:{ keywords:"見通しの甘さ、遅延、期待外れ。",
+    text:"予定どおりに結果が返ってこず、計画の見直しが必要かもしれません。自分を責めずに、前提のどこが甘かったかを点検してください。",
+    keyHint:"「甘かった見積もり」がどこかを確かめてください。",
+    summary:"計画に修正が必要になっていること", personal:"" } },
+{ id:25, name:"ワンドの4", name_en:"Four of Wands", arcana:"minor", suit:"wands",
+  upright:{ keywords:"祝福、安定、ひと区切りの喜び。",
+    text:"小さくても確かな達成を祝ってよい時です。区切りを祝うことは、次の力を蓄える儀式でもあります。",
+    keyHint:"「すでに築けている土台」に注目して読んでください。",
+    summary:"安定とひと区切りの祝福があること", personal:"" },
+  reversed:{ keywords:"不安定な土台、素直に祝えない事情、足踏み。",
+    text:"喜びたいのに、どこか落ち着かない揺らぎがあるようです。形だけ整える前に、土台のぐらつきを確かめてください。",
+    keyHint:"「祝えない引っかかり」の正体を探してください。",
+    summary:"土台の揺らぎが落ち着かなさを生んでいること", personal:"" } },
+{ id:26, name:"ワンドの5", name_en:"Five of Wands", arcana:"minor", suit:"wands",
+  upright:{ keywords:"競争、切磋琢磨、意見のぶつかり合い。",
+    text:"衝突はありますが、悪意のない揉まれ合いです。ぶつかることで削れるのは角であって、芯ではありません。",
+    keyHint:"「ぶつかり合いから得られるもの」を軸に読んでください。",
+    summary:"切磋琢磨の渦中にいること", personal:"" },
+  reversed:{ keywords:"争いの回避、内輪もめ、無益な消耗。",
+    text:"争点のはっきりしない小競り合いに、力を吸われていませんか。降りてよい土俵は降りるのも技術です。",
+    keyHint:"「本当は戦わなくていい争い」を見極めてください。",
+    summary:"不毛な消耗戦に巻き込まれていること", personal:"" } },
+{ id:27, name:"ワンドの6", name_en:"Six of Wands", arcana:"minor", suit:"wands",
+  upright:{ keywords:"勝利、承認、称賛。",
+    text:"努力が人の目に届き、認められる時です。素直に受け取ることも、称えてくれた人への礼儀のうちです。",
+    keyHint:"「認められつつある成果」を起点に読んでください。",
+    summary:"成果が認められる追い風の中にいること", personal:"" },
+  reversed:{ keywords:"傲慢、評価されない努力、報せの遅れ。",
+    text:"評価が遅れているか、評価と実感がずれています。他人の拍手を待つ間も、自分では自分を採点しておいてください。",
+    keyHint:"「評価とのずれ」がどこで起きているかを見てください。",
+    summary:"努力と評価が噛み合っていないこと", personal:"" } },
+{ id:28, name:"ワンドの7", name_en:"Seven of Wands", arcana:"minor", suit:"wands",
+  upright:{ keywords:"防戦、粘り、立場を守る勇気。",
+    text:"攻められてはいますが、位置はあなたが有利です。守り抜く価値のあるものを見失わずに、粘ってください。",
+    keyHint:"「守り抜くべき一線」を明確にして読んでください。",
+    summary:"守るべき立場を粘り強く守っていること", personal:"" },
+  reversed:{ keywords:"圧倒される、守り疲れ、譲歩。",
+    text:"守り続けて息が上がっています。全部を守ろうとせず、どうしても譲れない一点まで防衛線を下げる判断を。",
+    keyHint:"「手放してよい防衛線」を探してください。",
+    summary:"守り疲れが限界に近づいていること", personal:"" } },
+{ id:29, name:"ワンドの8", name_en:"Eight of Wands", arcana:"minor", suit:"wands",
+  upright:{ keywords:"急展開、スピード、追い風。",
+    text:"物事が一気に動き出します。迷っている時間のほうがコストになる時期なので、返事も行動も早めに。",
+    keyHint:"「加速している流れ」に他のカードを乗せて読んでください。",
+    summary:"追い風の急展開が来ていること", personal:"" },
+  reversed:{ keywords:"停滞、行き違い、焦りの空転。",
+    text:"急ぎたいのに進まない、連絡が噛み合わない──そんなもどかしさの時です。焦って矢を増やすより、一本を確実に。",
+    keyHint:"「行き違いの発生源」を確かめてください。",
+    summary:"流れが滞り空転していること", personal:"" } },
+{ id:30, name:"ワンドの9", name_en:"Nine of Wands", arcana:"minor", suit:"wands",
+  upright:{ keywords:"警戒、粘り強さ、あと少しの辛抱。",
+    text:"傷を負いながらも、まだ立てています。ここまで守ってきたこと自体が実力です。最後のひと踏ん張りの手前にいます。",
+    keyHint:"「あと少しで守り切れるもの」を軸に読んでください。",
+    summary:"最後の踏ん張りどころにいること", personal:"" },
+  reversed:{ keywords:"疲弊、疑心暗鬼、限界のサイン。",
+    text:"警戒し続けた心が擦り減っています。全方位を警戒するのはもう限界。信頼できる誰かに背中を預ける練習を。",
+    keyHint:"「過剰な警戒」がどこに向いているかを見てください。",
+    summary:"張り詰めた警戒が心を削っていること", personal:"" } },
+{ id:31, name:"ワンドの10", name_en:"Ten of Wands", arcana:"minor", suit:"wands",
+  upright:{ keywords:"重責、抱え込み、ゴール目前の重い荷。",
+    text:"背負っているものが多すぎますが、ゴールは見えています。全部運ぶ必要が本当にあるか、荷物の点検を。",
+    keyHint:"「抱えている荷物の中身」を仕分けて読んでください。",
+    summary:"重い荷を抱えながら終盤に差しかかっていること", personal:"" },
+  reversed:{ keywords:"手放す、負担の分散、限界の自覚。",
+    text:"限界を認められたこと自体が前進です。降ろした荷物は、あなたの価値を減らしません。",
+    keyHint:"「降ろしてよい荷物」を特定するのが鍵です。",
+    summary:"荷を降ろす転換点に来ていること", personal:"" } },
+{ id:32, name:"ワンドのペイジ", name_en:"Page of Wands", arcana:"minor", suit:"wands",
+  upright:{ keywords:"好奇心、情熱的な知らせ、冒険心の芽。",
+    text:"新しい「面白そう」が届いています。上手にやろうとせず、下手なまま始める許可を自分に出してください。",
+    keyHint:"「芽生えたばかりの好奇心」を軸に読んでください。",
+    summary:"新しい好奇心が芽吹いていること", personal:"" },
+  reversed:{ keywords:"気まぐれ、未熟さ、続かない熱。",
+    text:"熱しやすく冷めやすい波の中にいます。飽きっぽさを責めるより、「続く仕組み」を先に作るほうが有効です。",
+    keyHint:"「続かない理由」を意志以外の場所に探してください。",
+    summary:"熱が定着せず揺らいでいること", personal:"" } },
+{ id:33, name:"ワンドのナイト", name_en:"Knight of Wands", arcana:"minor", suit:"wands",
+  upright:{ keywords:"突進、情熱、大胆な行動。",
+    text:"勢いが最大の武器になる時です。多少の粗さは速度で補えます。置き去りにしている人がいないかだけ、時々振り返って。",
+    keyHint:"「勢いに乗せるべきもの」を見定めて読んでください。",
+    summary:"大胆に突き進む勢いがあること", personal:"" },
+  reversed:{ keywords:"短気、衝動的、計画性の欠如。",
+    text:"アクセルだけでブレーキがありません。情熱は本物なので、方向と手順を整えるだけで化けます。",
+    keyHint:"「衝動が向かっている先」を確かめてください。",
+    summary:"勢いが制御を失いかけていること", personal:"" } },
+{ id:34, name:"ワンドのクイーン", name_en:"Queen of Wands", arcana:"minor", suit:"wands",
+  upright:{ keywords:"快活さ、自信、人を惹きつける情熱。",
+    text:"あなたの明るさが場の温度を上げています。自分らしくいることが、そのまま周囲への貢献になる時期です。",
+    keyHint:"「あなたの魅力が効いている場所」を軸に読んでください。",
+    summary:"快活な魅力が発揮されていること", personal:"" },
+  reversed:{ keywords:"嫉妬、気分屋、支配的な振る舞い。",
+    text:"感情の火力が強すぎて、周りを焦がし気味かもしれません。火を消す必要はなく、向ける先を選ぶだけで十分です。",
+    keyHint:"「感情の火が向かう先」を点検してください。",
+    summary:"感情の火力が制御を求めていること", personal:"" } },
+{ id:35, name:"ワンドのキング", name_en:"King of Wands", arcana:"minor", suit:"wands",
+  upright:{ keywords:"統率力、ビジョン、カリスマ。",
+    text:"大きな絵を描き、人を動かす立場が回ってきています。細部は任せて、あなたは方角を示すことに集中を。",
+    keyHint:"「描くべき大きな絵」を中心に読んでください。",
+    summary:"ビジョンを掲げて導く局面であること", personal:"" },
+  reversed:{ keywords:"独善、短気、傲慢なリーダーシップ。",
+    text:"正しさへの確信が、聞く耳を塞いでいないでしょうか。強いビジョンほど、異論という風通しが必要です。",
+    keyHint:"「聞き逃している異論」を探してください。",
+    summary:"独走が風通しを悪くしていること", personal:"" } },
+
+/* ===== カップ ===== */
+{ id:36, name:"カップのエース", name_en:"Ace of Cups", arcana:"minor", suit:"cups",
+  upright:{ keywords:"愛の始まり、感情の満ちる器、心が開く。",
+    text:"心の器に新しい感情が注がれています。理屈で受け止めず、まず感じ切ることを優先してよい時です。",
+    keyHint:"「注がれ始めた感情」を軸に読んでください。",
+    summary:"心が開き、感情が満ち始めていること", personal:"" },
+  reversed:{ keywords:"感情の空回り、失望、満たされない心。",
+    text:"注いでも満ちない感覚があるなら、器のひび(疲れや我慢)が先です。補給より先に、修復を。",
+    keyHint:"「満たされなさの根」を探してください。",
+    summary:"心が満たされにくくなっていること", personal:"" } },
+{ id:37, name:"カップの2", name_en:"Two of Cups", arcana:"minor", suit:"cups",
+  upright:{ keywords:"相互理解、パートナーシップ、心の通い合い。",
+    text:"一対一の関係に、対等な交流が生まれています。差し出したぶん、ちゃんと返ってくる関係を大切に。",
+    keyHint:"「通い合っている相手」との関係を軸に読んでください。",
+    summary:"対等な心の交流が育っていること", personal:"" },
+  reversed:{ keywords:"不調和、誤解、すれ違う想い。",
+    text:"悪意のないすれ違いが積もっています。察してもらうのを待つより、言葉にして渡すほうが早く解けます。",
+    keyHint:"「言葉にしていない想い」を探してください。",
+    summary:"小さなすれ違いが積もっていること", personal:"" } },
+{ id:38, name:"カップの3", name_en:"Three of Cups", arcana:"minor", suit:"cups",
+  upright:{ keywords:"友情、祝宴、分かち合う喜び。",
+    text:"喜びは分け合うほど増える時期です。人と祝う予定を、意識して作ってみてください。",
+    keyHint:"「分かち合える仲間」を軸に読んでください。",
+    summary:"分かち合う喜びに恵まれていること", personal:"" },
+  reversed:{ keywords:"馴れ合い、享楽への傾き、輪の外の感覚。",
+    text:"楽しいはずの輪の中で、少し置いていかれた感覚があるかもしれません。無理に合わせるより、深く話せる一人を。",
+    keyHint:"「輪と自分の距離感」を確かめてください。",
+    summary:"賑わいと本音の距離が開いていること", personal:"" } },
+{ id:39, name:"カップの4", name_en:"Four of Cups", arcana:"minor", suit:"cups",
+  upright:{ keywords:"倦怠、無関心、機会の見落とし。",
+    text:"今あるものに飽きて、差し出されている新しい機会が見えていません。つまらなさは、視線を変える合図です。",
+    keyHint:"「見落としている差し出し」を探してください。",
+    summary:"倦怠の中で機会を見落としがちなこと", personal:"" },
+  reversed:{ keywords:"気づき、停滞からの脱出、新しい興味。",
+    text:"長い気だるさから、顔を上げるタイミングが来ています。小さな「ちょっと気になる」を拾ってください。",
+    keyHint:"「戻り始めた興味」を軸に読んでください。",
+    summary:"停滞から顔を上げつつあること", personal:"" } },
+{ id:40, name:"カップの5", name_en:"Five of Cups", arcana:"minor", suit:"cups",
+  upright:{ keywords:"喪失、後悔、こぼれた杯ばかり見る心。",
+    text:"失ったものの存在感が大きい時期です。悲しむ時間は必要ですが、まだ手元に残っているものがあることも、頭の隅に。",
+    keyHint:"「まだ残っているもの」を探しながら読んでください。",
+    summary:"喪失の悲しみの中にいること", personal:"" },
+  reversed:{ keywords:"受容、立ち直り、残された杯への視線。",
+    text:"悲しみに区切りがつき始めています。失ったものを忘れるのではなく、抱えたまま歩ける形に変わっていく時です。",
+    keyHint:"「回復の兆し」を軸に全体を読んでください。",
+    summary:"悲しみから顔を上げ始めていること", personal:"" } },
+{ id:41, name:"カップの6", name_en:"Six of Cups", arcana:"minor", suit:"cups",
+  upright:{ keywords:"郷愁、無邪気さ、過去からの優しい贈り物。",
+    text:"懐かしいものが心を温めてくれる時です。過去の楽しかった記憶は、今を生きる燃料として使えます。",
+    keyHint:"「過去から届いた贈り物」を軸に読んでください。",
+    summary:"過去の温かさが力になっていること", personal:"" },
+  reversed:{ keywords:"過去への執着、思い出への逃避。",
+    text:"思い出の中は安全ですが、時間が止まっています。過去を美化するほど、現在が色あせて見える仕掛けに注意を。",
+    keyHint:"「逃げ込んでいる思い出」がないか確かめてください。",
+    summary:"過去に留まり足が止まっていること", personal:"" } },
+{ id:42, name:"カップの7", name_en:"Seven of Cups", arcana:"minor", suit:"cups",
+  upright:{ keywords:"夢想、選択肢の幻惑、雲の上の願望。",
+    text:"選択肢が多すぎて、どれも現実味が薄い状態です。全部を眺める段階は終わり。一つだけ地上に降ろして具体化を。",
+    keyHint:"「幻想と現実の仕分け」を軸に読んでください。",
+    summary:"選択肢の幻惑の中にいること", personal:"" },
+  reversed:{ keywords:"現実への覚醒、決断、幻想の整理。",
+    text:"夢から覚めて、選ぶべきものが絞れてきています。捨てた選択肢を惜しまないこと。絞れたこと自体が前進です。",
+    keyHint:"「絞り込まれた本命」を中心に読んでください。",
+    summary:"幻想が整理され的が絞れてきたこと", personal:"" } },
+{ id:43, name:"カップの8", name_en:"Eight of Cups", arcana:"minor", suit:"cups",
+  upright:{ keywords:"立ち去る決意、探求への旅立ち、手放し。",
+    text:"積み上げたものを置いて、次を探しに行く決意の時です。逃げではなく卒業です。感謝だけ置いて、前へ。",
+    keyHint:"「離れるべき場所」と「向かう先」の対で読んでください。",
+    summary:"卒業と旅立ちの時が来ていること", personal:"" },
+  reversed:{ keywords:"迷い、戻るか進むかの逡巡、離れきれない未練。",
+    text:"去ると決めたのに、足が半分残っています。宙吊りの時間が一番消耗します。期限を切って決めましょう。",
+    keyHint:"「未練の正体」を探してください。",
+    summary:"去るか留まるかの宙吊りが続いていること", personal:"" } },
+{ id:44, name:"カップの9", name_en:"Nine of Cups", arcana:"minor", suit:"cups",
+  upright:{ keywords:"満足、願いの成就、心の充足。",
+    text:"望んでいたことが形になり、満ち足りた時間が訪れます。「これで十分」と言える感覚は、それ自体が財産です。",
+    keyHint:"「すでに叶っている願い」を数えながら読んでください。",
+    summary:"願いが満ちる充足の時であること", personal:"" },
+  reversed:{ keywords:"慢心、満たされない虚栄、上辺の満足。",
+    text:"満たされているはずなのに、どこか空虚──それは他人の物差しで満足を測っているサインかもしれません。自分の物差しに戻る時です。",
+    keyHint:"「誰の物差しで測っているか」を確かめてください。",
+    summary:"満足の物差しがずれていること", personal:"" } },
+{ id:45, name:"カップの10", name_en:"Ten of Cups", arcana:"minor", suit:"cups",
+  upright:{ keywords:"円満、家族的な幸福、心の安住。",
+    text:"身近な人との関係が、穏やかな完成形に近づいています。特別なことのない一日を、幸福と呼べる時期です。",
+    keyHint:"「守りたい穏やかさ」を中心に据えて読んでください。",
+    summary:"身近な幸福が満ちていること", personal:"" },
+  reversed:{ keywords:"身近な不和、理想と現実の落差、形だけの円満。",
+    text:"「幸せなはず」という理想が、現実の小さな軋みを見えにくくしています。完璧な円満より、修理しながら続く関係を。",
+    keyHint:"「見ないふりをしている軋み」を探してください。",
+    summary:"円満の裏で小さな軋みが鳴っていること", personal:"" } },
+{ id:46, name:"カップのペイジ", name_en:"Page of Cups", arcana:"minor", suit:"cups",
+  upright:{ keywords:"感受性、優しい知らせ、素直な心。",
+    text:"柔らかい感受性が開いています。ふとした感動や小さな親切が、思いがけない扉を開く時です。",
+    keyHint:"「心が動いた小さな瞬間」を軸に読んでください。",
+    summary:"感受性が開き優しい兆しがあること", personal:"" },
+  reversed:{ keywords:"感傷的、現実逃避、気持ちの空回り。",
+    text:"感情が繊細になりすぎて、少しのことで揺れています。感じたことを紙に書き出すと、揺れと自分の間に距離が作れます。",
+    keyHint:"「揺れの増幅装置」になっているものを探してください。",
+    summary:"繊細さが揺れやすさに傾いていること", personal:"" } },
+{ id:47, name:"カップのナイト", name_en:"Knight of Cups", arcana:"minor", suit:"cups",
+  upright:{ keywords:"ロマン、誘い、心からの申し出。",
+    text:"心のこもった誘いや提案が届く時です。損得より「心が動くか」で受け取ってよい場面です。",
+    keyHint:"「届いている申し出」を軸に読んでください。",
+    summary:"心からの誘いが届いていること", personal:"" },
+  reversed:{ keywords:"気分に流される、口先の優しさ、理想倒れ。",
+    text:"優しい言葉と実行の間に、距離があるかもしれません。自分についても相手についても、言葉より足取りを見てください。",
+    keyHint:"「言葉と行動のずれ」を確かめてください。",
+    summary:"甘い言葉と現実の距離が開いていること", personal:"" } },
+{ id:48, name:"カップのクイーン", name_en:"Queen of Cups", arcana:"minor", suit:"cups",
+  upright:{ keywords:"深い共感、包容力、癒しの器。",
+    text:"人の気持ちを汲む力が冴えています。ただし器は他人専用ではありません。自分の感情も同じ丁寧さで扱って。",
+    keyHint:"「誰の感情を受け止めているか」を軸に読んでください。",
+    summary:"深い共感力が働いていること", personal:"" },
+  reversed:{ keywords:"感情移入のしすぎ、境界線の曖昧さ、自己犠牲。",
+    text:"他人の痛みを自分の痛みとして背負いすぎています。共感に境界線を引くのは冷たさではなく、続けるための技術です。",
+    keyHint:"「引くべき境界線」がどこかを探してください。",
+    summary:"共感疲れが境界を溶かしていること", personal:"" } },
+{ id:49, name:"カップのキング", name_en:"King of Cups", arcana:"minor", suit:"cups",
+  upright:{ keywords:"感情の成熟、寛容、静かな包容力。",
+    text:"揺れる状況の中でも、感情を荒立てずに舵を取れています。その静けさが、周囲の安心の源になっています。",
+    keyHint:"「静かに保てている軸」を中心に読んでください。",
+    summary:"成熟した落ち着きで場を支えていること", personal:"" },
+  reversed:{ keywords:"感情の抑圧、気分の裏の顔、操作的な優しさ。",
+    text:"穏やかに見せるために、押し殺しているものが溜まっていませんか。抑えた感情は溜まり続けます。安全に出せる場所を確保してください。",
+    keyHint:"「水面下に沈めた感情」を探してください。",
+    summary:"穏やかさの下に抑圧が溜まっていること", personal:"" } },
+
+/* ===== ソード ===== */
+{ id:50, name:"ソードのエース", name_en:"Ace of Swords", arcana:"minor", suit:"swords",
+  upright:{ keywords:"明晰、真実、突破の一閃。",
+    text:"霧を裂くような明晰さが手に入る時です。曖昧にしてきた問題に、はっきりした言葉を与えてください。",
+    keyHint:"「言語化すべき核心」を軸に読んでください。",
+    summary:"明晰な一閃が状況を切り開くこと", personal:"" },
+  reversed:{ keywords:"混乱、誤った判断、言葉の刃。",
+    text:"思考が絡まり、言葉が凶器になりやすい時です。結論を急がず、判断を一晩寝かせる余裕を。",
+    keyHint:"「切れ味が裏目に出ている場面」を探してください。",
+    summary:"思考の切れ味が乱れていること", personal:"" } },
+{ id:51, name:"ソードの2", name_en:"Two of Swords", arcana:"minor", suit:"swords",
+  upright:{ keywords:"膠着、決断の保留、目隠しの均衡。",
+    text:"見ないことでバランスを保っている状態です。この均衡は仮のもの。目隠しを外すのが怖くても、情報を集めることから。",
+    keyHint:"「見ないようにしている選択」を軸に読んでください。",
+    summary:"決断を保留した膠着にあること", personal:"" },
+  reversed:{ keywords:"板挟みの限界、迫られる決断、外れる目隠し。",
+    text:"保留の賞味期限が切れ、決断が外から迫ってきます。追い込まれて選ぶ前に、自分の意志で選び直すほうが後悔は少ない。",
+    keyHint:"「迫られている二択」の前提を疑ってください。",
+    summary:"保留の限界が来ていること", personal:"" } },
+{ id:52, name:"ソードの3", name_en:"Three of Swords", arcana:"minor", suit:"swords",
+  upright:{ keywords:"心の痛み、悲しみ、真実による傷。",
+    text:"避けられない痛みを通過している時です。傷は真実に触れた証拠でもあります。痛みを否定せず、手当てを最優先に。",
+    keyHint:"「痛みの中心」を直視することが読み解きの鍵です。",
+    summary:"心の痛みの只中にいること", personal:"" },
+  reversed:{ keywords:"癒えかけの傷、痛みの長期化、赦しへの途上。",
+    text:"傷は塞がり始めていますが、時々疼きます。回復は一直線ではありません。ぶり返す日も、後退ではなく過程です。",
+    keyHint:"「癒えかけている傷」の扱い方を軸に読んでください。",
+    summary:"傷が癒える途上にあること", personal:"" } },
+{ id:53, name:"ソードの4", name_en:"Four of Swords", arcana:"minor", suit:"swords",
+  upright:{ keywords:"休息、静養、戦線離脱の勧め。",
+    text:"働き続けた心身に、意図的な休止が必要です。休むことは戦略のうち。予定に「何もしない時間」を組み込んで。",
+    keyHint:"「休ませるべきもの」を特定して読んでください。",
+    summary:"意図的な休息が必要な時であること", personal:"" },
+  reversed:{ keywords:"休めない焦り、回復の遅れ、擦り減りの兆し。",
+    text:"休んでいるつもりで、頭が働き続けていませんか。回復には「休む技術」が要ります。眠る前の情報を減らすことから。",
+    keyHint:"「休息を妨げているもの」を探してください。",
+    summary:"休めない状態が続いていること", personal:"" } },
+{ id:54, name:"ソードの5", name_en:"Five of Swords", arcana:"minor", suit:"swords",
+  upright:{ keywords:"虚しい勝利、対立の後味、勝ち方の問題。",
+    text:"勝てたとしても何かを失う戦い方になっていないでしょうか。「勝つこと」と「望む結果を得ること」は別物です。",
+    keyHint:"「その勝利で何を得て何を失うか」を軸に読んでください。",
+    summary:"勝ち方そのものが問われていること", personal:"" },
+  reversed:{ keywords:"和解の糸口、撤退の決断、後味の清算。",
+    text:"不毛な争いから降りる道が見えてきます。負けを認めるのではなく、土俵を変えるのだと考えてください。",
+    keyHint:"「降りることで得られるもの」を探してください。",
+    summary:"争いから降りる転機にあること", personal:"" } },
+{ id:55, name:"ソードの6", name_en:"Six of Swords", arcana:"minor", suit:"swords",
+  upright:{ keywords:"移行、静かな旅立ち、穏やかな水域へ。",
+    text:"荒れた場所から、静かな場所への移動が始まっています。劇的ではないけれど、確実に楽になる方向です。",
+    keyHint:"「離れつつある岸」と「向かう岸」の対で読んでください。",
+    summary:"穏やかな水域への移行が進んでいること", personal:"" },
+  reversed:{ keywords:"移行の停滞、重い積み荷、戻ろうとする流れ。",
+    text:"前に進みたいのに、過去のしがらみが足を重くしています。全部は運べません。何を置いていくかの選択を。",
+    keyHint:"「足を重くしている積み荷」を探してください。",
+    summary:"過去の重さが移行を妨げていること", personal:"" } },
+{ id:56, name:"ソードの7", name_en:"Seven of Swords", arcana:"minor", suit:"swords",
+  upright:{ keywords:"策略、単独行動、正面突破以外の道。",
+    text:"正攻法が最善とは限らない局面です。ただし賢さとずるさの境界には注意。誰かの信頼を担保にする策は高くつきます。",
+    keyHint:"「正面以外の道」と「その代償」を対で読んでください。",
+    summary:"搦め手が有効な局面であること", personal:"" },
+  reversed:{ keywords:"露見、自己欺瞞、誤魔化しの限界。",
+    text:"隠しごとや誤魔化しが、続けるほど重くなっています。自分から明かすのと露見するのとでは、条件が全く違います。",
+    keyHint:"「隠しているつもりのもの」を確かめてください。",
+    summary:"誤魔化しが限界に近づいていること", personal:"" } },
+{ id:57, name:"ソードの8", name_en:"Eight of Swords", arcana:"minor", suit:"swords",
+  upright:{ keywords:"束縛感、身動きの取れなさ、思い込みの檻。",
+    text:"縛られているように感じますが、縄の多くは「〜すべき」「どうせ無理」という思い込みです。一本ずつ、事実かどうか確かめて。",
+    keyHint:"「思い込みでできた柵」を特定するのが鍵です。",
+    summary:"思い込みの檻に囚われていること", personal:"" },
+  reversed:{ keywords:"檻からの脱出、視界の回復、自由の再発見。",
+    text:"縛っていたものの正体が見え、動ける範囲が広がっていきます。久しぶりの自由は少し怖いものですが、それは正常な感覚です。",
+    keyHint:"「外れかけている縄」を軸に読んでください。",
+    summary:"束縛から抜け出しつつあること", personal:"" } },
+{ id:58, name:"ソードの9", name_en:"Nine of Swords", arcana:"minor", suit:"swords",
+  upright:{ keywords:"不安、眠れない夜、頭の中の嵐。",
+    text:"夜の考えごとは、実際より数倍暗く見える性質があります。今の不安は「事実」と「想像」が混ざった状態。紙に書き出して仕分けを。",
+    keyHint:"「不安の内訳」を事実と想像に分けて読んでください。",
+    summary:"不安が頭の中で増幅していること", personal:"" },
+  reversed:{ keywords:"夜明け、不安の正体判明、回復の兆し。",
+    text:"最悪を想像した夜が明け、不安の実寸が見え始めます。思っていたより対処可能なはずです。一人で抱えず、口に出すことも回復を早めます。",
+    keyHint:"「実寸が見えてきた不安」を軸に読んでください。",
+    summary:"不安の霧が晴れ始めていること", personal:"" } },
+{ id:59, name:"ソードの10", name_en:"Ten of Swords", arcana:"minor", suit:"swords",
+  upright:{ keywords:"区切りの底、終焉、夜明け前。",
+    text:"ひとつの物事が完全に終わった状態です。ただし底に着いたということは、これ以上落ちないということ。ここからの方角は上しかありません。",
+    keyHint:"「完全に終わったもの」を見定めると、再生の起点が見えます。",
+    summary:"終わりが確定し、夜明けを待つ位置にいること", personal:"" },
+  reversed:{ keywords:"回復の始まり、最悪期の終了、起き上がり。",
+    text:"いちばん苦しい時期が過ぎ、ゆっくり起き上がる段階です。急がなくて大丈夫。回復の速度は他人と比べるものではありません。",
+    keyHint:"「回復の最初の一歩」を軸に読んでください。",
+    summary:"底から起き上がり始めていること", personal:"" } },
+{ id:60, name:"ソードのペイジ", name_en:"Page of Swords", arcana:"minor", suit:"swords",
+  upright:{ keywords:"好奇心の目、観察、情報収集。",
+    text:"情報を集め、状況を観察するのに適した時です。結論を出す前に、もう少し材料を増やしてよい段階です。",
+    keyHint:"「集めるべき情報」を軸に読んでください。",
+    summary:"観察と情報収集の段階にあること", personal:"" },
+  reversed:{ keywords:"詮索、噂、空回りする警戒。",
+    text:"情報過多で、かえって判断が濁っています。噂や憶測のノイズを切り、一次情報だけに戻ってください。",
+    keyHint:"「ノイズになっている情報源」を探してください。",
+    summary:"情報の濁りが判断を曇らせていること", personal:"" } },
+{ id:61, name:"ソードのナイト", name_en:"Knight of Swords", arcana:"minor", suit:"swords",
+  upright:{ keywords:"猛進、論理の突撃、迷いなき行動。",
+    text:"考えるより速く動ける時です。正しい目標に向いていれば最強ですが、向きの確認だけは出発前に。",
+    keyHint:"「突撃の向き」が合っているかを軸に読んでください。",
+    summary:"迷いなく突き進む速度があること", personal:"" },
+  reversed:{ keywords:"暴走、攻撃的な言葉、勇み足。",
+    text:"速度が出すぎて、言葉や判断が人を切りつけていないでしょうか。強い言葉ほど、送信前に一呼吸を。",
+    keyHint:"「勢い余って傷つけたもの」がないか確認してください。",
+    summary:"速度が刃になりかけていること", personal:"" } },
+{ id:62, name:"ソードのクイーン", name_en:"Queen of Swords", arcana:"minor", suit:"swords",
+  upright:{ keywords:"聡明、率直、感情に流されない判断。",
+    text:"曇りのない目で本質を見抜けています。率直さは時に厳しく響きますが、誠実さの一形態です。",
+    keyHint:"「見抜いている本質」を軸に読んでください。",
+    summary:"冷静な明晰さが働いていること", personal:"" },
+  reversed:{ keywords:"辛辣、皮肉、心を閉ざした鋭さ。",
+    text:"鋭さが防具になっていませんか。切り捨てる言葉の下に、傷つきたくない心があるなら、それも認めてあげてください。",
+    keyHint:"「鋭さで守っているもの」を探してください。",
+    summary:"鋭さが鎧になっていること", personal:"" } },
+{ id:63, name:"ソードのキング", name_en:"King of Swords", arcana:"minor", suit:"swords",
+  upright:{ keywords:"公正な知性、原則、明晰な統率。",
+    text:"感情に流されず、原則で判断を下せる時です。あなたの筋の通し方が、周囲の基準になります。",
+    keyHint:"「貫くべき原則」を中心に読んでください。",
+    summary:"原則に基づく判断が求められていること", personal:"" },
+  reversed:{ keywords:"冷淡、理屈の押しつけ、権威の濫用。",
+    text:"正しさが人を裁く道具になっていないでしょうか。理屈で勝って関係で負けるのは、総合では敗北です。",
+    keyHint:"「理屈が置き去りにしている感情」を探してください。",
+    summary:"正しさが冷たさに転じかけていること", personal:"" } },
+
+/* ===== ペンタクル ===== */
+{ id:64, name:"ペンタクルのエース", name_en:"Ace of Pentacles", arcana:"minor", suit:"pentacles",
+  upright:{ keywords:"実りの種、現実的なチャンス、物質的な始まり。",
+    text:"手で触れられる形のチャンスが差し出されています。夢物語ではなく、地に足のついた第一歩を刻める時です。",
+    keyHint:"「差し出された実りの種」を軸に読んでください。",
+    summary:"現実的なチャンスの種が手元にあること", personal:"" },
+  reversed:{ keywords:"機会の取りこぼし、基盤の不安、金銭の停滞。",
+    text:"チャンスはあるのに、受け皿の準備が整っていないようです。生活の土台や習慣を先に整えると、次の機会は逃しません。",
+    keyHint:"「受け皿の穴」を探してください。",
+    summary:"受け皿の不備が実りを逃していること", personal:"" } },
+{ id:65, name:"ペンタクルの2", name_en:"Two of Pentacles", arcana:"minor", suit:"pentacles",
+  upright:{ keywords:"やりくり、両立、変化の波乗り。",
+    text:"複数のことを器用に回せています。完璧な均衡ではなく、揺れながら保つのがこの時期の正解です。",
+    keyHint:"「両立させている二つ」を軸に読んでください。",
+    summary:"揺れながらも上手に回せていること", personal:"" },
+  reversed:{ keywords:"手一杯、優先順位の崩壊、綱渡りの限界。",
+    text:"回しているつもりが、回されています。全部を宙に浮かせ続けるのは無理です。一つ、地面に置いてください。",
+    keyHint:"「置くべき一つ」を特定するのが鍵です。",
+    summary:"やりくりが限界を超えかけていること", personal:"" } },
+{ id:66, name:"ペンタクルの3", name_en:"Three of Pentacles", arcana:"minor", suit:"pentacles",
+  upright:{ keywords:"協働、技術の評価、チームでの建設。",
+    text:"一人ではなく、組んで作る段階です。あなたの技術は評価されています。役割分担を信頼して。",
+    keyHint:"「組むべき相手」「果たすべき役割」を軸に読んでください。",
+    summary:"協働で形を作る段階にあること", personal:"" },
+  reversed:{ keywords:"連携不足、質の低下、評価されない技術。",
+    text:"各自が良かれと動いて、噛み合っていません。技術の問題ではなく、すり合わせの問題です。短くても会話の場を。",
+    keyHint:"「すり合わせ不足の箇所」を探してください。",
+    summary:"連携のずれが質を下げていること", personal:"" } },
+{ id:67, name:"ペンタクルの4", name_en:"Four of Pentacles", arcana:"minor", suit:"pentacles",
+  upright:{ keywords:"保持、堅実、守りの姿勢。",
+    text:"得たものを守る意識が強まっています。堅実さは美徳ですが、握りしめた手では新しいものを受け取れないことも覚えておいて。",
+    keyHint:"「握りしめているもの」を軸に読んでください。",
+    summary:"守りを固めている状態であること", personal:"" },
+  reversed:{ keywords:"手放しの時、執着の緩み、浪費への振れ。",
+    text:"握るか手放すかの振り子が動いています。全部握るでも全部手放すでもなく、「何のために持つか」に立ち返って。",
+    keyHint:"「持つ目的を失ったもの」を探してください。",
+    summary:"所有との関係が変わり目にあること", personal:"" } },
+{ id:68, name:"ペンタクルの5", name_en:"Five of Pentacles", arcana:"minor", suit:"pentacles",
+  upright:{ keywords:"困窮、孤立感、支えの見落とし。",
+    text:"物心どちらかの寒さの中にいます。ただ、すぐそばに使える助け(人・制度・窓口)があるのに気づいていない構図でもあります。助けを求めることは敗北ではありません。",
+    keyHint:"「気づいていない支え」を探すのが鍵です。",
+    summary:"困難の中で支えを見落としていること", personal:"" },
+  reversed:{ keywords:"回復の始まり、支援の到来、寒さの峠越え。",
+    text:"一番苦しい時期は峠を越えつつあります。差し出された手は、遠慮せず掴んでください。返すのは回復してからで十分です。",
+    keyHint:"「差し出されている手」を軸に読んでください。",
+    summary:"困窮の峠を越え始めていること", personal:"" } },
+{ id:69, name:"ペンタクルの6", name_en:"Six of Pentacles", arcana:"minor", suit:"pentacles",
+  upright:{ keywords:"与える・受け取る、援助、循環する豊かさ。",
+    text:"与えることと受け取ることの流れが生まれています。今どちらの立場でも、この循環に参加していること自体が財産です。",
+    keyHint:"「流れているもの(お金・厚意・知恵)」を軸に読んでください。",
+    summary:"豊かさの循環の中にいること", personal:"" },
+  reversed:{ keywords:"不均衡な施し、下心、貸し借りの歪み。",
+    text:"与える側と受け取る側の力関係が歪んでいませんか。「善意」の形をした支配や、返せない借りに注意を。",
+    keyHint:"「対等でないやり取り」を探してください。",
+    summary:"与え方・受け取り方が歪んでいること", personal:"" } },
+{ id:70, name:"ペンタクルの7", name_en:"Seven of Pentacles", arcana:"minor", suit:"pentacles",
+  upright:{ keywords:"成長待ち、経過の評価、辛抱の投資。",
+    text:"植えたものが育つのを待つ段階です。焦って引き抜けば台無しに。今できるのは、水やりと観察の継続です。",
+    keyHint:"「育っている途中のもの」を軸に読んでください。",
+    summary:"成果を待つ育成期にあること", personal:"" },
+  reversed:{ keywords:"徒労感、実らない投資、見切りの検討。",
+    text:"注いだわりに育たないものがあるなら、土壌ごと見直す時かもしれません。撤退の判断も、投資判断のうちです。",
+    keyHint:"「実らない畑」を見極めてください。",
+    summary:"実らない投資の見直し時であること", personal:"" } },
+{ id:71, name:"ペンタクルの8", name_en:"Eight of Pentacles", arcana:"minor", suit:"pentacles",
+  upright:{ keywords:"鍛錬、コツコツ、職人の集中。",
+    text:"地道な反復が着実に技術を積んでいます。派手さはなくても、この積み上げは裏切りません。",
+    keyHint:"「磨いている技術」を軸に読んでください。",
+    summary:"地道な鍛錬が実を結びつつあること", personal:"" },
+  reversed:{ keywords:"惰性の作業、質より量、雑さの露呈。",
+    text:"手が慣れて、心が抜けています。量をこなすことが目的化していないか、一つの仕事を丁寧にやり直してみて。",
+    keyHint:"「惰性になった作業」を探してください。",
+    summary:"作業が惰性に流れていること", personal:"" } },
+{ id:72, name:"ペンタクルの9", name_en:"Nine of Pentacles", arcana:"minor", suit:"pentacles",
+  upright:{ keywords:"自立した豊かさ、成熟、一人で満ちる庭。",
+    text:"自分の力で築いた環境で、静かに満ちている状態です。誰かに証明する必要のない豊かさを、堂々と味わってください。",
+    keyHint:"「自力で築いたもの」を軸に読んでください。",
+    summary:"自立した豊かさを味わえる時であること", personal:"" },
+  reversed:{ keywords:"見栄、他人軸の豊かさ、孤独な城。",
+    text:"満たされているはずなのに満たされない──それは暮らしが他人に見せるためのものになっているからかもしれません。自分のための一つを取り戻して。",
+    keyHint:"「誰のための豊かさか」を問い直してください。",
+    summary:"豊かさが他人軸に傾いていること", personal:"" } },
+{ id:73, name:"ペンタクルの10", name_en:"Ten of Pentacles", arcana:"minor", suit:"pentacles",
+  upright:{ keywords:"継承、家族的な繁栄、長く続く土台。",
+    text:"一代で終わらない、長い時間軸の豊かさに関わっています。受け取ったものと、渡していくもの。その連なりの中に自分を置いてみて。",
+    keyHint:"「受け継いだもの・遺すもの」を軸に読んでください。",
+    summary:"長い時間軸の土台が整っていること", personal:"" },
+  reversed:{ keywords:"身内のもめごと、伝統の重荷、土台の綻び。",
+    text:"「家」や「続いてきたもの」が重荷になっていませんか。継ぐことと縛られることは別です。何を残し、何を降ろすかの整理を。",
+    keyHint:"「重荷になっている継承」を探してください。",
+    summary:"受け継いだものが重荷になっていること", personal:"" } },
+{ id:74, name:"ペンタクルのペイジ", name_en:"Page of Pentacles", arcana:"minor", suit:"pentacles",
+  upright:{ keywords:"学びの芽、堅実な向上心、実務の入り口。",
+    text:"新しい学びや実務に、真面目な芽が出ています。地味に見えても、この芽は根がしっかりしています。",
+    keyHint:"「育て始めた学び」を軸に読んでください。",
+    summary:"堅実な学びが芽吹いていること", personal:"" },
+  reversed:{ keywords:"集中力の欠如、学びの中断、目先の楽さ。",
+    text:"始めた学びが、途中で放置されていませんか。再開に必要なのは気合ではなく、ハードルを下げること(5分だけ、1ページだけ)です。",
+    keyHint:"「中断している学び」を探してください。",
+    summary:"学びが中断したままになっていること", personal:"" } },
+{ id:75, name:"ペンタクルのナイト", name_en:"Knight of Pentacles", arcana:"minor", suit:"pentacles",
+  upright:{ keywords:"着実、忍耐、止まらない歩み。",
+    text:"速くはないけれど、確実に前に進んでいます。この歩幅を恥じる必要はありません。継続はいちばん静かな才能です。",
+    keyHint:"「淡々と続けていること」を軸に読んでください。",
+    summary:"着実な歩みが続いていること", personal:"" },
+  reversed:{ keywords:"停滞、マンネリ、慎重すぎる足踏み。",
+    text:"慎重さが行き過ぎて、止まっているのと変わらなくなっています。安全確認はもう十分。次の一歩は多少雑でも出すことに意味があります。",
+    keyHint:"「確認しすぎて動けない箇所」を探してください。",
+    summary:"慎重さが停滞に変わっていること", personal:"" } },
+{ id:76, name:"ペンタクルのクイーン", name_en:"Queen of Pentacles", arcana:"minor", suit:"pentacles",
+  upright:{ keywords:"実務的な優しさ、世話上手、地に足のついた豊かさ。",
+    text:"現実的な形で人を支える力が発揮されています。温かい食事や整った部屋のような、手触りのある優しさが今のあなたの強みです。",
+    keyHint:"「手触りのある支え」を軸に読んでください。",
+    summary:"実務的な優しさが場を支えていること", personal:"" },
+  reversed:{ keywords:"世話疲れ、自分の後回し、実務の積滞。",
+    text:"人の世話で、自分の分が後回しになっています。順番を一つだけ入れ替えて、まず自分の必要を満たしてください。",
+    keyHint:"「後回しにしている自分の必要」を探してください。",
+    summary:"自分のケアが後回しになっていること", personal:"" } },
+{ id:77, name:"ペンタクルのキング", name_en:"King of Pentacles", arcana:"minor", suit:"pentacles",
+  upright:{ keywords:"実りの完成、経済的な安定、頼れる現実感覚。",
+    text:"現実的な成功と安定の頂に近づいています。築いたものを守りつつ、次の世代や仲間に分ける余裕も生まれる時です。",
+    keyHint:"「築き上げた安定」を軸に読んでください。",
+    summary:"実りが安定の形に結実していること", personal:"" },
+  reversed:{ keywords:"物質への固執、頑固な保守、豊かさの独り占め。",
+    text:"安定を守る力が、変化を拒む頑なさに変わっていませんか。資産も知恵も、流さないと淀みます。",
+    keyHint:"「固執が塞いでいる流れ」を探してください。",
+    summary:"安定への固執が流れを止めていること", personal:"" } }
+];
+
+/* ===================== アプリ本体 ===================== */
+const board = document.getElementById('board');
+const overall = document.getElementById('overall');
+let draw = [];
+let flipped = 0;
+
+function pick(pool, n){
+  const a=[...pool];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a.slice(0,n);
+}
+const flip = () => Math.random() < 0.5 ? 'upright' : 'reversed';
+
+function faceDownHTML(i, isKey, posLabel){
+  return `<div class="tcard facedown ${isKey?'keyback':''}" id="slot${i}" onclick="reveal(${i})">
+    <div class="glyph">✦</div>
+    <div class="poslabel">${posLabel}</div>
+  </div>`;
+}
+
+function faceHTML(item){
+  const m = item.card[item.dir];
+  const isRev = item.dir==='reversed';
+  const body = item.isKey
+    ? `<div class="desc"><span class="lbl">読み解きのヒント</span>${m.keyHint}</div>`
+    : `<div class="desc"><span class="lbl">状況の説明</span>${m.text}</div>`;
+  return `<div class="pos">${item.pos}</div>
+    <img class="cimg ${isRev?'revimg':''}" src="img/${item.card.id}.png" alt="${item.card.name}" onerror="this.style.display='none'">
+    <div class="cname">${item.card.name}<small>${item.card.name_en}</small></div>
+    <span class="dir ${isRev?'rev':''}">${isRev?'逆位置':'正位置'}</span>
+    <div class="kw">${m.keywords}</div>
+    ${body}
+    ${m.personal ? `<div class="personal">${m.personal}</div>` : ''}`;
+}
+
+function reveal(i){
+  const el = document.getElementById('slot'+i);
+  if(!el || !el.classList.contains('facedown')) return;
+  el.classList.add('flipping');
+  setTimeout(()=>{
+    el.classList.remove('facedown','keyback','flipping');
+    el.classList.add('open','rise');
+    if(draw[i].isKey) el.classList.add('key');
+    el.innerHTML = faceHTML(draw[i]);
+    el.onclick = null;
+    flipped++;
+    if(flipped === draw.length) showOverall();
+  }, 280);
+}
+
+function setup(items){
+  draw = items; flipped = 0;
+  overall.classList.remove('show'); overall.innerHTML = '';
+  const main = items.filter(x=>!x.isKey)
+    .map((x)=>faceDownHTML(items.indexOf(x), false, x.pos)).join('');
+  const keyIdx = items.findIndex(x=>x.isKey);
+  board.innerHTML =
+    `<div class="hint">カードをタップしてめくってください</div>
+     <div class="row">${main}</div>
+     <div class="keywrap">${faceDownHTML(keyIdx, true, 'キーカード')}</div>`;
+}
+
+function drawOne(){
+  setActive('btn1');
+  const majors = CARDS.filter(c=>c.arcana==='major');
+  const main = pick(majors,1)[0];
+  const key  = pick(CARDS.filter(c=>c.id!==main.id),1)[0];
+  setup([
+    {card:main, dir:flip(), pos:'メインカード', isKey:false},
+    {card:key,  dir:flip(), pos:'キーカード ─ 読み解きの鍵', isKey:true}
+  ]);
+}
+
+function drawThree(){
+  setActive('btn3');
+  const p = pick(CARDS,4);
+  const labels = ['状況','障害','アドバイス'];
+  const items = p.slice(0,3).map((c,i)=>({card:c, dir:flip(), pos:labels[i], isKey:false}));
+  items.push({card:p[3], dir:flip(), pos:'キーカード ─ 読み解きの鍵', isKey:true});
+  setup(items);
+}
+
+/* ===== じっくりタロット(ケルティッククロス・一括開封) ===== */
+const CELTIC_LABELS = ['現状','障害','顕在意識','潜在意識','過去','近未来','自分の立場','周囲の状況','願望と恐れ','最終結果'];
+
+function miniHTML(item, n, extraClass){
+  const isRev = item.dir==='reversed';
+  return `<div class="mcard ${isRev?'mrev':''} ${extraClass||''}">
+    <img src="img/${item.card.id}.png" alt=""
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="mname">${item.card.name}</div>
+    <span class="mnum">${n}</span>
+  </div>`;
+}
+
+function drawCeltic(){
+  setActive('btnC');
+  const p = pick(CARDS,10);
+  draw = p.map((c,i)=>({card:c, dir:flip(), pos:`${i+1}. ${CELTIC_LABELS[i]}`, isKey:false}));
+  flipped = 10; // 一括開封なのでタップ処理は使わない
+  overall.classList.remove('show'); overall.innerHTML = '';
+
+  /* 盤面(十字) 配置:中央=1と2、上=3、下=4、左=5、右=6、右列(下から上)=7,8,9,10 */
+  const boardHTML =
+    `<div class="hint">ケルティッククロス ─ 10枚の物語</div>
+     <div class="celtic">
+       <div class="cpos5">${miniHTML(draw[2],3)}</div>
+       <div class="cpos4">${miniHTML(draw[4],5)}</div>
+       <div class="ccross">${miniHTML(draw[0],1)}${miniHTML(draw[1],2,'crossed')}</div>
+       <div class="cpos6">${miniHTML(draw[5],6)}</div>
+       <div class="cpos3">${miniHTML(draw[3],4)}</div>
+       <div class="cpos10">${miniHTML(draw[9],10)}</div>
+       <div class="cpos9">${miniHTML(draw[8],9)}</div>
+       <div class="cpos8">${miniHTML(draw[7],8)}</div>
+       <div class="cpos7">${miniHTML(draw[6],7)}</div>
+     </div>
+     <div class="legend">1 現状 / 2 障害 / 3 顕在意識 / 4 潜在意識 / 5 過去<br>
+       6 近未来 / 7 自分の立場 / 8 周囲の状況 / 9 願望と恐れ / 10 最終結果</div>
+     <div class="row">${draw.map(item=>`<div class="tcard open rise">${faceHTML(item)}</div>`).join('')}</div>`;
+
+  board.innerHTML = boardHTML;
+  showCelticOverall();
+}
+
+function showCelticOverall(){
+  const g = i => draw[i].card[draw[i].dir];
+  const nm = i => `「${draw[i].card.name}(${dirLabel(draw[i].dir)})」`;
+  const text =
+    `中心にあるのは${nm(0)}。${g(0).summary}──これが今の現在地です。`+
+    `そこに${nm(1)}が横たわり、${g(1).summary}が課題として交差しています。`+
+    `頭では${nm(2)}が示すように${g(2).summary}を意識していますが、心の深いところでは${nm(3)}──${g(3).summary}が流れています。`+
+    `ここまでの経緯として${nm(4)}は${g(4).summary}を物語り、この流れのままいけば、近い未来は${nm(5)}が示す${g(5).summary}へ向かいます。`+
+    `あなた自身の立ち位置は${nm(6)}(${g(6).summary})、周囲の状況は${nm(7)}(${g(7).summary})。`+
+    `心の底にある願いと恐れを映すのは${nm(8)}で、${g(8).summary}がその正体です。`+
+    `そしてこの読み全体の到達点として、${nm(9)}が${g(9).summary}を告げています。`+
+    `10枚をひとつの物語として眺めたとき、どこか一箇所、胸に引っかかる場所があるはずです。そこが、今のあなたにとっての本題です。`;
+  overall.innerHTML = `<div class="panel"><h2>READING</h2><p>${text}</p></div>`;
+  overall.classList.add('show');
+}
+
+function setActive(id){
+  document.querySelectorAll('.modes button').forEach(b=>b.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+
+function dirLabel(d){ return d==='upright' ? '正位置' : '逆位置'; }
+
+function showOverall(){
+  let text = '';
+  if(draw.length === 2){
+    const m = draw[0], k = draw[1];
+    const mm = m.card[m.dir], km = k.card[k.dir];
+    text =
+      `今日の中心にあるのは「${m.card.name}(${dirLabel(m.dir)})」。${mm.summary}──それがこの一枚のメッセージです。`+
+      `そこに、鍵として「${k.card.name}(${dirLabel(k.dir)})」が添えられました。${km.summary}という視点を重ねると、メインカードの意味はより立体的になります。`+
+      `${km.keyHint}二枚をひとつの絵として眺めたとき、心に最初に浮かんだ言葉を、今日の合言葉にしてみてください。`;
+  } else {
+    const [a,b,c,k] = draw;
+    const am=a.card[a.dir], bm=b.card[b.dir], cm=c.card[c.dir], km=k.card[k.dir];
+    text =
+      `まず状況。「${a.card.name}(${dirLabel(a.dir)})」が示すのは、${am.summary}。ここがこの読みの出発点です。`+
+      `次に障害。「${b.card.name}(${dirLabel(b.dir)})」が指しているのは、${bm.summary}。流れを重くしているのは、おそらくこの部分です。`+
+      `そしてアドバイスの「${c.card.name}(${dirLabel(c.dir)})」。${cm.summary}という位置から、次の一手を考えてみてください。`+
+      `最後に、全体を読み解く鍵となる「${k.card.name}(${dirLabel(k.dir)})」は、${km.summary}を告げています。${km.keyHint}`+
+      `三枚と鍵をひとつの物語として繋げたとき、どこか一箇所、胸に引っかかる場所があるはずです。そこが、今のあなたにとっての本題です。`;
+  }
+  overall.innerHTML = `<div class="panel"><h2>READING</h2><p>${text}</p></div>`;
+  overall.classList.add('show');
+}
+
+/* 背景のきらめき */
+for(let i=0;i<40;i++){
+  const s=document.createElement('div');
+  s.className='star';
+  const size=Math.random()*2.2+0.6;
+  s.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}vw;top:${Math.random()*100}vh;animation-delay:${Math.random()*4}s`;
+  document.body.appendChild(s);
+}
+const sh=document.createElement('div');sh.className='shooting';document.body.appendChild(sh);
+</script>
+</body>
+</html>
