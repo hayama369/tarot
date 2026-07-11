@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tarot</title>
+<title>TAROT</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -35,7 +35,6 @@
     -webkit-background-clip:text;background-clip:text;color:transparent;
     text-shadow:0 0 24px rgba(170,210,255,.25);
   }
-  header p{margin-top:10px;font-size:.82rem;color:#a8c4e4;letter-spacing:.18em}
 
   .pray{
     text-align:center;font-size:.8rem;color:#a8c4e4;
@@ -96,12 +95,11 @@
   }
   .pos{font-size:.72rem;letter-spacing:.25em;color:#8fb6dd;margin-bottom:6px}
   .open.key .pos{color:var(--silver)}
+  .cimg{width:100%;border-radius:8px;margin:6px 0 8px;display:block;
+    border:1px solid rgba(170,205,245,.3)}
+  .cimg.revimg{transform:rotate(180deg)}
   .cname{font-family:'Cinzel',serif;font-size:1.05rem;color:#fff}
   .cname small{display:block;font-size:.68rem;color:#a9c8ea;letter-spacing:.12em;margin-top:2px}
-	.cimg{width:100%;border-radius:8px;margin:6px 0;
-  border:1px solid rgba(170,205,245,.3);display:block}
-	.cimg.revimg{transform:rotate(180deg)}
-
   .dir{display:inline-block;margin:8px 0;font-size:.72rem;padding:2px 10px;border-radius:999px;
     border:1px solid rgba(200,225,255,.4)}
   .dir.rev{color:#f0c8c8;border-color:rgba(240,180,180,.5)}
@@ -140,7 +138,6 @@
 <body>
 <header>
   <h1>TAROT</h1>
-  <p>自分を見つめ直すための一枚、あるいは三枚。</p>
 </header>
 
 <p class="pray">占いたいことを思い浮かべながらタップしてください</p>
@@ -259,7 +256,7 @@ const CARDS = [
     keyHint:"「自力ではどうにもならない流れ」と「その流れへの乗り方」を分けて読むのが鍵です。",
     summary:"流れが変わる転機が来ていること", personal:"" },
   reversed:{ keywords:"停滞、タイミングのずれ、流れへの抵抗。",
-    text:"頑張りと結果が噛み合わないのは、時計の針がまだその位置に来ていないからかもしれません。無理にこじ開けるより、次の回転を待つ準備に力を使うほうが賢明です。",
+    text:"頑張りと結果が噛み合わないのは、時期がまだ来ていないだけかもしれません。無理にこじ開けるより、次の機会に備える準備に力を使うほうが賢明です。",
     keyHint:"「今は動かすべきでないもの」を見分けることが読み解きの中心になります。",
     summary:"タイミングがまだ整っていないこと", personal:"" } },
 { id:11, name:"正義", name_en:"Justice", arcana:"major",
@@ -282,7 +279,7 @@ const CARDS = [
     summary:"報われない我慢に絡め取られていること", personal:"" } },
 { id:13, name:"死神", name_en:"Death", arcana:"major",
   upright:{ keywords:"終わりと再生、変容、手放し、大きな区切り。",
-    text:"ひとつの章が終わろうとしています。それは喪失であると同時に、次の章の必要条件です。終わりを引き延ばすほど再生も遅れます。丁寧に、しかしはっきりと幕を引くことが最善の供養になります。",
+    text:"ひとつの章が終わろうとしています。それは喪失であると同時に、次の章の必要条件です。終わりを引き延ばすほど再生も遅れます。丁寧に、しかしはっきりと幕を引くことが、次に進む一番の近道です。",
     keyHint:"「終わらせるべきもの」と「その先に生まれるもの」のペアで他のカードを読んでください。",
     summary:"大きな区切りと再生の途上にあること", personal:"" },
   reversed:{ keywords:"執着、停滞、変化への抵抗、終わらせられない状態。",
@@ -318,16 +315,16 @@ const CARDS = [
     summary:"限界の先送りが続いていること", personal:"" } },
 { id:17, name:"星", name_en:"The Star", arcana:"major",
   upright:{ keywords:"希望、癒し、ひらめき、未来への信頼。",
-    text:"嵐のあとの、静かな夜空のような時期です。すぐに現実が変わるわけではなくても、方角を示す星は確かに見えています。焦らず、希望に水をやり続けてください。回復と着想の両方が育つ時です。",
+    text:"嵐のあとの、静かな夜空のような時期です。すぐに現実が変わるわけではなくても、目指す方向ははっきり見えています。焦らず、今できる小さな行動を続けてください。回復と着想の両方が育つ時です。",
     keyHint:"「遠くに見えている目標・希望」を基準点に、他のカードまでの道のりを読んでください。",
-    summary:"希望と癒しの光が見え始めていること", personal:"" },
+    summary:"希望と回復の見通しが立ち始めていること", personal:"" },
   reversed:{ keywords:"失望、理想と現実の乖離、悲観、希望の見失い。",
-    text:"星が見えないのは、星が消えたからではなく、雲が出ているだけかもしれません。理想が高すぎて現在地との落差に疲れているなら、目標を諦めるのではなく中継地点を増やしてください。",
+    text:"目標が見えなくなっているのは、目標が消えたからではなく、疲れで視界が曇っているだけかもしれません。理想と現在地の落差がきついなら、目標を諦めるのではなく中継地点を増やしてください。",
     keyHint:"「高すぎる理想」と「現在地」のあいだに何が足りないかを探してください。",
-    summary:"希望が一時的に曇って見えること", personal:"" } },
+    summary:"目標が一時的に見えにくくなっていること", personal:"" } },
 { id:18, name:"月", name_en:"The Moon", arcana:"major",
   upright:{ keywords:"不安、曖昧さ、幻想、潜在意識、揺らぎ。",
-    text:"輪郭のはっきりしない不安が漂う時期です。月明かりの下では、縄が蛇に見えることもあります。今見えている「最悪の想像」は、夜の照明効果かもしれません。重大な判断は、状況が明るくなるのを待つのが得策です。",
+    text:"輪郭のはっきりしない不安が漂う時期です。情報が足りない状態では、想像が最悪の方向に膨らみがちです。今見えている「最悪の予想」は、事実というより疲れと不確かさの産物かもしれません。重大な判断は、状況がはっきりするまで保留が得策です。",
     keyHint:"「事実」と「想像で膨らんだ部分」を仕分けながら他のカードを読んでください。",
     summary:"曖昧さと不安の霧の中にいること", personal:"" },
   reversed:{ keywords:"霧が晴れる、不安の解消、隠れていたものの露呈。",
@@ -336,22 +333,22 @@ const CARDS = [
     summary:"霧が晴れ、実像が見え始めていること", personal:"" } },
 { id:19, name:"太陽", name_en:"The Sun", arcana:"major",
   upright:{ keywords:"成功、生命力、祝福、明るさ、素直な喜び。",
-    text:"隠すもののない、まっすぐな成功と喜びの時です。難しく考える必要はありません。楽しいものを楽しい、嬉しいものを嬉しいと言ってよい──その素直さ自体が、次の幸運を呼び込む体質を作ります。",
+    text:"隠すもののない、まっすぐな成功と喜びの時です。難しく考える必要はありません。楽しいものを楽しい、嬉しいものを嬉しいと言ってよい──その素直さが人を集め、次の機会も連れてきます。",
     keyHint:"「すでにうまくいっているもの」を起点に、他のカードを発展の物語として読んでください。",
-    summary:"祝福と生命力に満ちた好調期であること", personal:"" },
+    summary:"生命力に満ちた好調期であること", personal:"" },
   reversed:{ keywords:"自信の陰り、延期、曇りがちな気分、空元気。",
-    text:"本来の輝きが、疲れや遠慮で少し曇っています。失われたのではなく、雲の上では太陽は普通に照っています。無理に明るく振る舞うより、日向ぼっこのように小さな喜びを補給してください。",
+    text:"本来の調子が、疲れや遠慮で少し落ちています。失われたわけではなく、一時的に出せていないだけです。無理に明るく振る舞うより、小さな楽しみを具体的に予定へ入れて補給してください。",
     keyHint:"「空元気で覆っている本音」がどこにあるかを見てください。",
-    summary:"本来の明るさが一時的に翳っていること", personal:"" } },
+    summary:"本来の調子が一時的に落ちていること", personal:"" } },
 { id:20, name:"審判", name_en:"Judgement", arcana:"major",
   upright:{ keywords:"復活、覚醒、再評価、答えを出すとき。",
-    text:"一度終わったと思っていたものが、形を変えて呼び戻される時です。過去の経験・挫折・保留にした夢が、今のあなたなら扱える課題として再登場します。ラッパは鳴っています。応えるかどうかの返事を出す時です。",
+    text:"一度終わったと思っていたものが、形を変えて呼び戻される時です。過去の経験・挫折・保留にした夢が、今のあなたなら扱える課題として再登場します。応えるかどうか、返事を出す時です。",
     keyHint:"「もう一度チャンスが来ているもの」を中心に据えて全体を読んでください。",
-    summary:"再起と決着の呼び声が響いていること", personal:"" },
+    summary:"再起と決着の機会が来ていること", personal:"" },
   reversed:{ keywords:"後悔、過去への執着、チャンスの見送り。",
-    text:"過去の判断を悔やむ声が大きくなって、今の呼びかけが聞こえにくくなっています。過去は変えられませんが、過去の「意味」はこれからの行動で書き換えられます。うつむいたままだと、二度目のラッパを聞き逃します。",
+    text:"過去の判断を悔やむ声が大きくなって、今の機会が見えにくくなっています。過去は変えられませんが、過去の「意味」はこれからの行動で書き換えられます。うつむいたままだと、二度目の機会も見逃します。",
     keyHint:"「後悔に使っている時間」が「次の機会」を覆い隠していないか確認してください。",
-    summary:"過去への後悔が現在の呼び声を遮っていること", personal:"" } },
+    summary:"過去への後悔が現在の機会を遮っていること", personal:"" } },
 { id:21, name:"世界", name_en:"The World", arcana:"major",
   upright:{ keywords:"完成、統合、達成、円満、ひとつの物語の結び。",
     text:"長い道のりが、ひとつの完成形にたどり着きます。バラバラだった要素が噛み合い、円が閉じる感覚があるはずです。達成を十分に味わってください。次の物語は、この円の外側から始まります。",
@@ -382,12 +379,12 @@ const CARDS = [
     keyHint:"「安全圏に留まらせているもの」を探してください。",
     summary:"踏み出せない足踏みが続いていること", personal:"" } },
 { id:24, name:"ワンドの3", name_en:"Three of Wands", arcana:"minor", suit:"wands",
-  upright:{ keywords:"拡大、협力、遠くを見据えた期待。",
-    text:"打った手が動き出し、船の帰りを待つような時期です。焦らず、視線は遠くに保ったままで。動き出した流れを信じてよい段階です。",
+  upright:{ keywords:"拡大、協力、遠くを見据えた期待。",
+    text:"打った手が動き出し、結果を待つ時期です。焦らず、視線は遠くに保ったままで。動き出した流れを信じてよい段階です。",
     keyHint:"「すでに動き出しているもの」を軸に読んでください。",
     summary:"蒔いた種が動き出していること", personal:"" },
   reversed:{ keywords:"見通しの甘さ、遅延、期待外れ。",
-    text:"予定どおりに船が戻らず、計画の見直しが必要かもしれません。自分を責めずに、前提のどこが甘かったかを点検してください。",
+    text:"予定どおりに結果が返ってこず、計画の見直しが必要かもしれません。自分を責めずに、前提のどこが甘かったかを点検してください。",
     keyHint:"「甘かった見積もり」がどこかを確かめてください。",
     summary:"計画に修正が必要になっていること", personal:"" } },
 { id:25, name:"ワンドの4", name_en:"Four of Wands", arcana:"minor", suit:"wands",
@@ -520,7 +517,7 @@ const CARDS = [
     summary:"賑わいと本音の距離が開いていること", personal:"" } },
 { id:39, name:"カップの4", name_en:"Four of Cups", arcana:"minor", suit:"cups",
   upright:{ keywords:"倦怠、無関心、機会の見落とし。",
-    text:"今あるものに飽きて、差し出されている新しい杯が見えていません。つまらなさは、視線を変える合図です。",
+    text:"今あるものに飽きて、差し出されている新しい機会が見えていません。つまらなさは、視線を変える合図です。",
     keyHint:"「見落としている差し出し」を探してください。",
     summary:"倦怠の中で機会を見落としがちなこと", personal:"" },
   reversed:{ keywords:"気づき、停滞からの脱出、新しい興味。",
@@ -529,7 +526,7 @@ const CARDS = [
     summary:"停滞から顔を上げつつあること", personal:"" } },
 { id:40, name:"カップの5", name_en:"Five of Cups", arcana:"minor", suit:"cups",
   upright:{ keywords:"喪失、後悔、こぼれた杯ばかり見る心。",
-    text:"失ったものの存在感が大きい時期です。悲しむ時間は必要ですが、背後にまだ立っている杯があることも、頭の隅に。",
+    text:"失ったものの存在感が大きい時期です。悲しむ時間は必要ですが、まだ手元に残っているものがあることも、頭の隅に。",
     keyHint:"「まだ残っているもの」を探しながら読んでください。",
     summary:"喪失の悲しみの中にいること", personal:"" },
   reversed:{ keywords:"受容、立ち直り、残された杯への視線。",
@@ -614,7 +611,7 @@ const CARDS = [
     keyHint:"「静かに保てている軸」を中心に読んでください。",
     summary:"成熟した落ち着きで場を支えていること", personal:"" },
   reversed:{ keywords:"感情の抑圧、気分の裏の顔、操作的な優しさ。",
-    text:"穏やかに見せるために、押し殺しているものが溜まっていませんか。抑えた感情は水位を上げます。安全な放流路を。",
+    text:"穏やかに見せるために、押し殺しているものが溜まっていませんか。抑えた感情は溜まり続けます。安全に出せる場所を確保してください。",
     keyHint:"「水面下に沈めた感情」を探してください。",
     summary:"穏やかさの下に抑圧が溜まっていること", personal:"" } },
 
@@ -670,8 +667,8 @@ const CARDS = [
     keyHint:"「離れつつある岸」と「向かう岸」の対で読んでください。",
     summary:"穏やかな水域への移行が進んでいること", personal:"" },
   reversed:{ keywords:"移行の停滞、重い積み荷、戻ろうとする流れ。",
-    text:"前に進みたいのに、積み荷(過去のしがらみ)が船を重くしています。全部は運べません。何を岸に置いていくかの選択を。",
-    keyHint:"「船を重くしている積み荷」を探してください。",
+    text:"前に進みたいのに、過去のしがらみが足を重くしています。全部は運べません。何を置いていくかの選択を。",
+    keyHint:"「足を重くしている積み荷」を探してください。",
     summary:"過去の重さが移行を妨げていること", personal:"" } },
 { id:56, name:"ソードの7", name_en:"Seven of Swords", arcana:"minor", suit:"swords",
   upright:{ keywords:"策略、単独行動、正面突破以外の道。",
@@ -684,7 +681,7 @@ const CARDS = [
     summary:"誤魔化しが限界に近づいていること", personal:"" } },
 { id:57, name:"ソードの8", name_en:"Eight of Swords", arcana:"minor", suit:"swords",
   upright:{ keywords:"束縛感、身動きの取れなさ、思い込みの檻。",
-    text:"縛られているように感じますが、縄の多くは「〜すべき」「どうせ無理」という思い込みです。檻の柵を一本ずつ、事実かどうか確かめて。",
+    text:"縛られているように感じますが、縄の多くは「〜すべき」「どうせ無理」という思い込みです。一本ずつ、事実かどうか確かめて。",
     keyHint:"「思い込みでできた柵」を特定するのが鍵です。",
     summary:"思い込みの檻に囚われていること", personal:"" },
   reversed:{ keywords:"檻からの脱出、視界の回復、自由の再発見。",
@@ -753,7 +750,7 @@ const CARDS = [
     keyHint:"「差し出された実りの種」を軸に読んでください。",
     summary:"現実的なチャンスの種が手元にあること", personal:"" },
   reversed:{ keywords:"機会の取りこぼし、基盤の不安、金銭の停滞。",
-    text:"チャンスはあるのに、受け皿の準備が整っていないようです。器(生活の土台や習慣)を先に整えると、次の種は落ちません。",
+    text:"チャンスはあるのに、受け皿の準備が整っていないようです。生活の土台や習慣を先に整えると、次の機会は逃しません。",
     keyHint:"「受け皿の穴」を探してください。",
     summary:"受け皿の不備が実りを逃していること", personal:"" } },
 { id:65, name:"ペンタクルの2", name_en:"Two of Pentacles", arcana:"minor", suit:"pentacles",
@@ -784,12 +781,12 @@ const CARDS = [
     keyHint:"「持つ目的を失ったもの」を探してください。",
     summary:"所有との関係が変わり目にあること", personal:"" } },
 { id:68, name:"ペンタクルの5", name_en:"Five of Pentacles", arcana:"minor", suit:"pentacles",
-  upright:{ keywords:"困窮、孤立感、灯りの外にいる感覚。",
-    text:"物心どちらかの寒さの中にいます。ただ、すぐそばに灯り(助け)があるのに気づいていない構図でもあります。助けを求めることは敗北ではありません。",
-    keyHint:"「気づいていない灯り」を探すのが鍵です。",
-    summary:"寒さの中で灯りを見落としていること", personal:"" },
+  upright:{ keywords:"困窮、孤立感、支えの見落とし。",
+    text:"物心どちらかの寒さの中にいます。ただ、すぐそばに使える助け(人・制度・窓口)があるのに気づいていない構図でもあります。助けを求めることは敗北ではありません。",
+    keyHint:"「気づいていない支え」を探すのが鍵です。",
+    summary:"困難の中で支えを見落としていること", personal:"" },
   reversed:{ keywords:"回復の始まり、支援の到来、寒さの峠越え。",
-    text:"一番寒い時期は峠を越えつつあります。差し出された手は、遠慮せず掴んでください。返すのは回復してからで十分です。",
+    text:"一番苦しい時期は峠を越えつつあります。差し出された手は、遠慮せず掴んでください。返すのは回復してからで十分です。",
     keyHint:"「差し出されている手」を軸に読んでください。",
     summary:"困窮の峠を越え始めていること", personal:"" } },
 { id:69, name:"ペンタクルの6", name_en:"Six of Pentacles", arcana:"minor", suit:"pentacles",
@@ -821,11 +818,11 @@ const CARDS = [
     summary:"作業が惰性に流れていること", personal:"" } },
 { id:72, name:"ペンタクルの9", name_en:"Nine of Pentacles", arcana:"minor", suit:"pentacles",
   upright:{ keywords:"自立した豊かさ、成熟、一人で満ちる庭。",
-    text:"自分の力で築いた庭で、静かに満ちている状態です。誰かに証明する必要のない豊かさを、堂々と味わってください。",
+    text:"自分の力で築いた環境で、静かに満ちている状態です。誰かに証明する必要のない豊かさを、堂々と味わってください。",
     keyHint:"「自力で築いたもの」を軸に読んでください。",
     summary:"自立した豊かさを味わえる時であること", personal:"" },
   reversed:{ keywords:"見栄、他人軸の豊かさ、孤独な城。",
-    text:"立派な庭なのに満たされない──それは庭が他人に見せるためのものになっているからかもしれません。自分のための一輪を植え直して。",
+    text:"満たされているはずなのに満たされない──それは暮らしが他人に見せるためのものになっているからかもしれません。自分のための一つを取り戻して。",
     keyHint:"「誰のための豊かさか」を問い直してください。",
     summary:"豊かさが他人軸に傾いていること", personal:"" } },
 { id:73, name:"ペンタクルの10", name_en:"Ten of Pentacles", arcana:"minor", suit:"pentacles",
@@ -861,7 +858,7 @@ const CARDS = [
     keyHint:"「手触りのある支え」を軸に読んでください。",
     summary:"実務的な優しさが場を支えていること", personal:"" },
   reversed:{ keywords:"世話疲れ、自分の後回し、実務の積滞。",
-    text:"人の世話で、自分の皿が空になっています。順番を一つだけ入れ替えて、まず自分に一杯注いでください。",
+    text:"人の世話で、自分の分が後回しになっています。順番を一つだけ入れ替えて、まず自分の必要を満たしてください。",
     keyHint:"「後回しにしている自分の必要」を探してください。",
     summary:"自分のケアが後回しになっていること", personal:"" } },
 { id:77, name:"ペンタクルのキング", name_en:"King of Pentacles", arcana:"minor", suit:"pentacles",
@@ -890,8 +887,6 @@ const flip = () => Math.random() < 0.5 ? 'upright' : 'reversed';
 
 function faceDownHTML(i, isKey, posLabel){
   return `<div class="tcard facedown ${isKey?'keyback':''}" id="slot${i}" onclick="reveal(${i})">
-	    <img class="cimg ${isRev?'revimg':''}" src="img/${item.card.id}.png" alt="${item.card.name}">
-
     <div class="glyph">✦</div>
     <div class="poslabel">${posLabel}</div>
   </div>`;
@@ -904,6 +899,7 @@ function faceHTML(item){
     ? `<div class="desc"><span class="lbl">読み解きのヒント</span>${m.keyHint}</div>`
     : `<div class="desc"><span class="lbl">状況の説明</span>${m.text}</div>`;
   return `<div class="pos">${item.pos}</div>
+    <img class="cimg ${isRev?'revimg':''}" src="img/${item.card.id}.png" alt="${item.card.name}" onerror="this.style.display='none'">
     <div class="cname">${item.card.name}<small>${item.card.name_en}</small></div>
     <span class="dir ${isRev?'rev':''}">${isRev?'逆位置':'正位置'}</span>
     <div class="kw">${m.keywords}</div>
