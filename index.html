@@ -134,29 +134,71 @@
   .cpos8{grid-column:4;grid-row:3}
   .cpos7{grid-column:4;grid-row:4}
 
+  /* ===== ミニカード(3Dフリップ対応) ===== */
   .mcard{
-    width:84px;height:126px;border-radius:8px;overflow:hidden;position:relative;
-    border:1px solid rgba(170,205,245,.5);
-    background:rgba(10,20,45,.65);
-    box-shadow:0 3px 12px rgba(0,10,40,.5);
+    width:84px;height:126px;border-radius:8px;position:relative;
     animation:rise .5s ease both;
+    perspective:600px;          /* 3D奥行き */
+    background:transparent;border:none;box-shadow:none;
   }
-  .mcard img{width:100%;height:100%;object-fit:cover;display:block}
-  .mcard.mrev img{transform:rotate(180deg)}
-  .mcard .mnum{
+  .mcard .flip-inner{
+    position:relative;width:100%;height:100%;
+    transition:transform .7s cubic-bezier(.4,.1,.2,1);
+    transform-style:preserve-3d;
+  }
+  .mcard.flipped .flip-inner{transform:rotateY(180deg)}
+
+  /* 裏面(伏せた面) */
+  .mface{
+    position:absolute;inset:0;border-radius:8px;overflow:hidden;
+    backface-visibility:hidden;-webkit-backface-visibility:hidden;
+    border:1px solid rgba(170,205,245,.5);
+    box-shadow:0 3px 12px rgba(0,10,40,.5);
+  }
+  .mback{
+    background:
+      radial-gradient(circle at 25% 30%, rgba(255,255,255,.14) 0 1.2px, transparent 1.8px),
+      radial-gradient(circle at 70% 20%, rgba(255,255,255,.12) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 55% 70%, rgba(255,255,255,.1) 0 1px, transparent 1.6px),
+      linear-gradient(160deg,#101c3e,#1a2c58 60%,#22355f);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;
+  }
+  .mback .glyph{font-size:1.1rem;color:#cfe2f8;text-shadow:0 0 10px rgba(180,215,255,.8)}
+  .mback .mnum{font-size:.62rem;color:#8fb0d6;font-family:'Cinzel',serif}
+
+  /* 表面 */
+  .mfront{
+    transform:rotateY(180deg);
+    background:rgba(10,20,45,.65);
+  }
+  .mfront img{width:100%;height:100%;object-fit:cover;display:block}
+  .mcard.mrev .mfront img{transform:rotate(180deg)}
+  .mfront .mnum{
     position:absolute;bottom:2px;right:5px;font-size:.62rem;color:#eaf3ff;
     text-shadow:0 0 5px rgba(0,0,0,.9);font-family:'Cinzel',serif}
-  .mcard .mname{
+  .mfront .mname{
     display:none;width:100%;height:100%;padding:6px;text-align:center;
     align-items:center;justify-content:center;font-size:.6rem;line-height:1.5;color:#cfe2f8}
-  .mcard.mrev .mname{transform:rotate(180deg)}
+  .mcard.mrev .mfront .mname{transform:rotate(180deg)}
   .mcard.crossed{
     position:absolute;top:50%;left:50%;
     transform:translate(-50%,-50%) rotate(90deg);
-    box-shadow:0 0 16px rgba(150,200,255,.4);
   }
+  .mcard.flipped .mface{box-shadow:0 0 14px rgba(150,200,255,.45)}
+
   .legend{text-align:center;font-size:.7rem;color:#8fb0d6;letter-spacing:.12em;
     margin:4px 0 26px;line-height:1.9}
+
+  /* 開くボタン */
+  .revealwrap{text-align:center;margin:32px 0}
+  #btnReveal{
+    padding:12px 32px;font-size:1rem;letter-spacing:.08em;
+    background:rgba(200,225,250,.16);
+    border:1px solid rgba(190,215,240,.4);color:#cfe8ff;border-radius:999px;
+    cursor:pointer;transition:.25s;font-family:'Zen Kaku Gothic New';
+  }
+  #btnReveal:hover{box-shadow:0 0 18px rgba(190,215,250,.35);color:#fff}
+  #btnReveal:disabled{opacity:.45;cursor:default;box-shadow:none}
 
   /* 総合解説 */
   #overall{max-width:720px;margin:44px auto 60px;padding:0 16px;display:none}
@@ -999,16 +1041,26 @@ function drawThree(){
   setup(items);
 }
 
-/* ===== じっくりタロット(ケルティッククロス) ===== */
+/* ===== じっくりタロット(ケルティッククロス・フリップ開封) ===== */
 const CELTIC_LABELS = ['現状','障害','顕在意識','潜在意識','過去','近未来','自分の立場','周囲の状況','願望と恐れ','最終結果'];
 
-function miniHTML(item, n, extraClass){
+/* 裏向きで置かれるミニカード(3Dフリップ構造)
+   drawIdx = draw配列のインデックス / n = 表示番号 */
+function miniHTML(item, n, extraClass, drawIdx){
   const isRev = item.dir==='reversed';
-  return `<div class="mcard ${isRev?'mrev':''} ${extraClass||''}">
-    <img src="img/${item.card.id}.png" alt=""
-      onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-    <div class="mname">${item.card.name}</div>
-    <span class="mnum">${n}</span>
+  return `<div class="mcard ${isRev?'mrev':''} ${extraClass||''}" id="mini${drawIdx}">
+    <div class="flip-inner">
+      <div class="mface mback">
+        <div class="glyph">✦</div>
+        <span class="mnum">${n}</span>
+      </div>
+      <div class="mface mfront">
+        <img src="img/${item.card.id}.png" alt=""
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="mname">${item.card.name}</div>
+        <span class="mnum">${n}</span>
+      </div>
+    </div>
   </div>`;
 }
 
@@ -1019,72 +1071,72 @@ function drawCeltic(){
   flipped = 10;
   overall.classList.remove('show'); overall.innerHTML = '';
 
-  /* 盤面(十字) 配置 */
+  /* 盤面(十字) 全部伏せた状態で配置 */
   const boardHTML =
     `<div class="hint">ケルティッククロス ─ 10枚の物語</div>
      <div class="celtic">
-       <div class="cpos5">${miniHTML(draw[2],3)}</div>
-       <div class="cpos4">${miniHTML(draw[4],5)}</div>
-       <div class="ccross">${miniHTML(draw[0],1)}${miniHTML(draw[1],2,'crossed')}</div>
-       <div class="cpos6">${miniHTML(draw[5],6)}</div>
-       <div class="cpos3">${miniHTML(draw[3],4)}</div>
-       <div class="cpos10">${miniHTML(draw[9],10)}</div>
-       <div class="cpos9">${miniHTML(draw[8],9)}</div>
-       <div class="cpos8">${miniHTML(draw[7],8)}</div>
-       <div class="cpos7">${miniHTML(draw[6],7)}</div>
+       <div class="cpos5">${miniHTML(draw[2],3,'',2)}</div>
+       <div class="cpos4">${miniHTML(draw[4],5,'',4)}</div>
+       <div class="ccross">${miniHTML(draw[0],1,'',0)}${miniHTML(draw[1],2,'crossed',1)}</div>
+       <div class="cpos6">${miniHTML(draw[5],6,'',5)}</div>
+       <div class="cpos3">${miniHTML(draw[3],4,'',3)}</div>
+       <div class="cpos10">${miniHTML(draw[9],10,'',9)}</div>
+       <div class="cpos9">${miniHTML(draw[8],9,'',8)}</div>
+       <div class="cpos8">${miniHTML(draw[7],8,'',7)}</div>
+       <div class="cpos7">${miniHTML(draw[6],7,'',6)}</div>
      </div>
      <div class="legend">1 現状 / 2 障害 / 3 顕在意識 / 4 潜在意識 / 5 過去<br>
        6 近未来 / 7 自分の立場 / 8 周囲の状況 / 9 願望と恐れ / 10 最終結果</div>
-     <div style="text-align:center;margin:32px 0">
-       <button id="btnReveal" onclick="revealAllCeltic()" 
-         style="padding:12px 32px;font-size:1rem;background:rgba(200,225,250,.16);
-           border:1px solid rgba(190,215,240,.4);color:#cfe8ff;border-radius:999px;
-           cursor:pointer;transition:.25s;font-family:'Zen Kaku Gothic New';letter-spacing:.08em">
-         すべてのカードを開く
-       </button>
+     <div class="revealwrap">
+       <button id="btnReveal" onclick="revealAllCeltic()">すべてのカードを開く</button>
      </div>
-     <div id="cardDetails" class="row" style="display:none"></div>`;
+     <div id="cardDetails" class="row"></div>`;
 
   board.innerHTML = boardHTML;
 }
 
 function revealAllCeltic(){
   const btn = document.getElementById('btnReveal');
+  if(!btn || btn.disabled) return;
   btn.disabled = true;
-  btn.style.opacity = '0.5';
-  
+
   const details = document.getElementById('cardDetails');
-  let delay = 0;
-  
-  // 10枚を順番にめくる（150msずつ間隔を空ける）
+  const flipInterval = 350;   // 1枚ごとの間隔(ms)
+  const flipDuration = 700;   // CSSのフリップ時間と揃える
+
+  /* 1→10の順にシャララーンとフリップ */
   for(let i = 0; i < 10; i++){
     setTimeout(() => {
-      const card = draw[i];
+      const el = document.getElementById('mini'+i);
+      if(el) el.classList.add('flipped');
+    }, i * flipInterval);
+  }
+
+  /* 全部めくれ終わったら、詳細カードをふわっと順に出す */
+  const detailStart = 10 * flipInterval + flipDuration;
+  for(let i = 0; i < 10; i++){
+    setTimeout(() => {
       const cardEl = document.createElement('div');
-      cardEl.className = 'tcard open rise';
-      cardEl.innerHTML = faceHTML(card);
-      cardEl.style.animation = 'none';
+      cardEl.className = 'tcard open';
+      cardEl.innerHTML = faceHTML(draw[i]);
       cardEl.style.opacity = '0';
       cardEl.style.transform = 'translateY(12px)';
-      
       details.appendChild(cardEl);
-      
-      // アニメーション開始
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         cardEl.style.transition = 'opacity .45s ease, transform .45s ease';
         cardEl.style.opacity = '1';
         cardEl.style.transform = 'none';
-      }, 10);
-    }, delay);
-    delay += 150;
+      });
+    }, detailStart + i * 120);
   }
-  
-  // 最後のカードが開き終わったら詳細表示＆ボタン削除
+
+  /* 最後に総合解説、ボタンは静かに消す */
   setTimeout(() => {
-    details.style.display = 'flex';
-    btn.remove();
+    btn.parentElement.style.transition = 'opacity .5s ease';
+    btn.parentElement.style.opacity = '0';
+    setTimeout(()=>btn.parentElement.remove(), 500);
     showCelticOverall();
-  }, delay + 500);
+  }, detailStart + 10 * 120 + 400);
 }
 
 function showCelticOverall(){
