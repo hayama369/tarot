@@ -999,7 +999,7 @@ function drawThree(){
   setup(items);
 }
 
-/* ===== じっくりタロット(ケルティッククロス・一括開封) ===== */
+/* ===== じっくりタロット(ケルティッククロス) ===== */
 const CELTIC_LABELS = ['現状','障害','顕在意識','潜在意識','過去','近未来','自分の立場','周囲の状況','願望と恐れ','最終結果'];
 
 function miniHTML(item, n, extraClass){
@@ -1016,10 +1016,10 @@ function drawCeltic(){
   setActive('btnC');
   const p = pick(CARDS,10);
   draw = p.map((c,i)=>({card:c, dir:flip(), pos:`${i+1}. ${CELTIC_LABELS[i]}`, isKey:false}));
-  flipped = 10; // 一括開封なのでタップ処理は使わない
+  flipped = 10;
   overall.classList.remove('show'); overall.innerHTML = '';
 
-  /* 盤面(十字) 配置:中央=1と2、上=3、下=4、左=5、右=6、右列(下から上)=7,8,9,10 */
+  /* 盤面(十字) 配置 */
   const boardHTML =
     `<div class="hint">ケルティッククロス ─ 10枚の物語</div>
      <div class="celtic">
@@ -1035,10 +1035,56 @@ function drawCeltic(){
      </div>
      <div class="legend">1 現状 / 2 障害 / 3 顕在意識 / 4 潜在意識 / 5 過去<br>
        6 近未来 / 7 自分の立場 / 8 周囲の状況 / 9 願望と恐れ / 10 最終結果</div>
-     <div class="row">${draw.map(item=>`<div class="tcard open rise">${faceHTML(item)}</div>`).join('')}</div>`;
+     <div style="text-align:center;margin:32px 0">
+       <button id="btnReveal" onclick="revealAllCeltic()" 
+         style="padding:12px 32px;font-size:1rem;background:rgba(200,225,250,.16);
+           border:1px solid rgba(190,215,240,.4);color:#cfe8ff;border-radius:999px;
+           cursor:pointer;transition:.25s;font-family:'Zen Kaku Gothic New';letter-spacing:.08em">
+         すべてのカードを開く
+       </button>
+     </div>
+     <div id="cardDetails" class="row" style="display:none"></div>`;
 
   board.innerHTML = boardHTML;
-  showCelticOverall();
+}
+
+function revealAllCeltic(){
+  const btn = document.getElementById('btnReveal');
+  btn.disabled = true;
+  btn.style.opacity = '0.5';
+  
+  const details = document.getElementById('cardDetails');
+  let delay = 0;
+  
+  // 10枚を順番にめくる（150msずつ間隔を空ける）
+  for(let i = 0; i < 10; i++){
+    setTimeout(() => {
+      const card = draw[i];
+      const cardEl = document.createElement('div');
+      cardEl.className = 'tcard open rise';
+      cardEl.innerHTML = faceHTML(card);
+      cardEl.style.animation = 'none';
+      cardEl.style.opacity = '0';
+      cardEl.style.transform = 'translateY(12px)';
+      
+      details.appendChild(cardEl);
+      
+      // アニメーション開始
+      setTimeout(() => {
+        cardEl.style.transition = 'opacity .45s ease, transform .45s ease';
+        cardEl.style.opacity = '1';
+        cardEl.style.transform = 'none';
+      }, 10);
+    }, delay);
+    delay += 150;
+  }
+  
+  // 最後のカードが開き終わったら詳細表示＆ボタン削除
+  setTimeout(() => {
+    details.style.display = 'flex';
+    btn.remove();
+    showCelticOverall();
+  }, delay + 500);
 }
 
 function showCelticOverall(){
