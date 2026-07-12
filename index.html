@@ -219,6 +219,159 @@
     .celtic{grid-template-columns:repeat(3,64px) 64px;grid-template-rows:repeat(4,96px);gap:8px}
     .mcard{width:64px;height:96px}
   }
+
+  /* ===== タブ ===== */
+  .tabs{display:flex;justify-content:center;gap:8px;padding:0 16px 22px}
+  .tab{
+    font-family:'Cinzel','Zen Kaku Gothic New',serif;font-size:.82rem;letter-spacing:.2em;
+    padding:9px 26px;border-radius:10px 10px 0 0;cursor:pointer;
+    color:#9db8d8;background:rgba(255,255,255,.04);
+    border:1px solid rgba(190,215,240,.25);border-bottom:none;transition:.25s;
+  }
+  .tab.on{color:#fff;background:rgba(200,225,250,.14);
+    box-shadow:0 -2px 16px rgba(190,215,250,.25);border-color:rgba(190,215,240,.5)}
+
+  /* ===== 調べるモード:スロット ===== */
+  #lkBoard{max-width:860px;margin:0 auto;padding:0 14px 6px}
+  .lkgrid{display:flex;flex-wrap:wrap;justify-content:center;gap:16px}
+  .lkslot{width:120px;display:flex;flex-direction:column;align-items:center;gap:6px;
+    animation:rise .4s ease both}
+  .lkslot .slabel{font-size:.68rem;letter-spacing:.12em;color:#8fb0d6;text-align:center;
+    min-height:2.2em;display:flex;align-items:center;justify-content:center;line-height:1.4}
+  .lkslot input.slabel-in{
+    width:100%;font-size:.7rem;text-align:center;padding:4px 6px;border-radius:6px;
+    background:rgba(255,255,255,.06);border:1px solid rgba(190,215,240,.4);
+    color:var(--ice);font-family:'Zen Kaku Gothic New'}
+  .lkframe{
+    width:100px;height:150px;border-radius:10px;cursor:pointer;position:relative;
+    border:1.5px dashed rgba(170,205,245,.5);
+    background:rgba(10,20,45,.35);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;
+    transition:.25s;overflow:hidden;
+  }
+  .lkframe:hover{border-color:rgba(210,230,255,.85);box-shadow:0 0 14px rgba(150,200,255,.3)}
+  .lkframe .plus{font-size:1.5rem;color:#7fa2cc}
+  .lkframe .tapmsg{font-size:.58rem;letter-spacing:.15em;color:#7fa2cc}
+  .lkframe.filled{border:1px solid rgba(170,205,245,.6);
+    box-shadow:0 3px 14px rgba(0,10,40,.5)}
+  .lkframe.filled img{width:100%;height:100%;object-fit:cover}
+  .lkframe.filled.frev img{transform:rotate(180deg)}
+  .lkframe .fname{
+    position:absolute;bottom:0;left:0;right:0;font-size:.58rem;text-align:center;
+    padding:3px 2px;background:rgba(5,12,30,.75);color:#dcebfc;line-height:1.3}
+  .lkframe .fdir{
+    position:absolute;top:3px;right:4px;font-size:.55rem;padding:1px 6px;border-radius:999px;
+    background:rgba(5,12,30,.8);border:1px solid rgba(200,225,255,.4);color:#cfe2f8}
+  .lkframe .fdir.rev{color:#f0c8c8;border-color:rgba(240,180,180,.5)}
+  .lkctl{display:flex;gap:4px;justify-content:center;flex-wrap:wrap}
+  .lkctl button{
+    font-size:.62rem;padding:3px 8px;border-radius:6px;cursor:pointer;
+    background:rgba(255,255,255,.06);border:1px solid rgba(190,215,240,.35);
+    color:#a8c4e4;font-family:'Zen Kaku Gothic New';transition:.2s}
+  .lkctl button:hover{color:#fff;border-color:rgba(210,230,255,.7)}
+  .lk-tools{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:0 16px 24px}
+  .lk-tools button{
+    font-size:.75rem;padding:8px 18px;border-radius:999px;cursor:pointer;letter-spacing:.08em;
+    background:rgba(255,255,255,.05);border:1px solid rgba(190,215,240,.4);
+    color:var(--ice);font-family:'Zen Kaku Gothic New';transition:.25s}
+  .lk-tools button:hover,.lk-tools button.on{background:rgba(200,225,250,.16);color:#fff;
+    box-shadow:0 0 14px rgba(190,215,250,.3)}
+  #lkDetails{max-width:860px;margin:26px auto 0;padding:0 14px}
+  #lkOverall{max-width:720px;margin:36px auto 20px;padding:0 16px;display:none}
+  #lkOverall.show{display:block;animation:rise .6s ease both}
+  #lkOverall .panel{
+    background:rgba(14,22,46,.72);border:1px solid var(--silver2);
+    border-radius:16px;padding:26px 24px;
+    box-shadow:0 0 32px rgba(200,220,245,.18);backdrop-filter:blur(5px)}
+  #lkOverall h2{font-family:'Cinzel',serif;font-size:.95rem;letter-spacing:.35em;
+    color:var(--silver);text-align:center;margin-bottom:16px}
+  #lkOverall p{font-size:.86rem;line-height:2;color:#dfeafb}
+
+  /* ===== カード選択モーダル ===== */
+  #pickerOverlay{
+    display:none;position:fixed;inset:0;z-index:100;
+    background:rgba(4,9,24,.8);backdrop-filter:blur(3px);
+    align-items:center;justify-content:center;padding:20px}
+  #pickerOverlay.show{display:flex}
+  #picker{
+    width:min(880px,100%);max-height:86vh;display:flex;flex-direction:column;
+    background:linear-gradient(165deg,#0e1a3c,#15254c);
+    border:1px solid rgba(190,215,240,.5);border-radius:16px;
+    box-shadow:0 10px 50px rgba(0,5,20,.8);overflow:hidden;
+    animation:rise .3s ease both}
+  .picker-head{
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    padding:14px 18px;border-bottom:1px solid rgba(190,215,240,.25)}
+  .picker-head .ptitle{font-size:.85rem;letter-spacing:.15em;color:#dcebfc;flex:1}
+  .dirsel{display:flex;gap:6px}
+  .dirsel button{
+    font-size:.72rem;padding:5px 14px;border-radius:999px;cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid rgba(190,215,240,.4);
+    color:#a8c4e4;font-family:'Zen Kaku Gothic New';transition:.2s}
+  .dirsel button.on{background:rgba(200,225,250,.2);color:#fff;
+    box-shadow:0 0 10px rgba(190,215,250,.35)}
+  .dirsel button#dirRev.on{background:rgba(240,180,180,.18);color:#f6d4d4;
+    border-color:rgba(240,180,180,.5)}
+  .picker-close{
+    font-size:1rem;padding:4px 12px;border-radius:8px;cursor:pointer;
+    background:none;border:1px solid rgba(190,215,240,.35);color:#a8c4e4}
+  #pickerGrid{overflow-y:auto;padding:14px 18px 22px}
+  .psec{font-family:'Cinzel','Zen Kaku Gothic New',serif;font-size:.72rem;letter-spacing:.25em;
+    color:var(--silver2);margin:14px 0 8px;border-bottom:1px dashed rgba(180,205,240,.3);
+    padding-bottom:4px}
+  .pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:10px}
+  .pcard{cursor:pointer;text-align:center;transition:.2s;border-radius:8px;padding:4px}
+  .pcard:hover{background:rgba(200,225,250,.12);transform:translateY(-2px)}
+  .pcard .pthumb{
+    width:100%;aspect-ratio:2/3;border-radius:6px;overflow:hidden;
+    border:1px solid rgba(170,205,245,.4);background:rgba(10,20,45,.6);
+    display:flex;align-items:center;justify-content:center}
+  .pcard .pthumb img{width:100%;height:100%;object-fit:cover}
+  .pcard .pthumb .pfall{display:none;font-size:.56rem;line-height:1.4;color:#cfe2f8;padding:4px}
+  .pcard .pnm{font-size:.58rem;color:#a8c4e4;margin-top:4px;line-height:1.3}
+
+  /* ===== 保存・記録 ===== */
+  .savebox{max-width:720px;margin:10px auto 50px;padding:0 16px;display:none}
+  .savebox.show{display:block;animation:rise .5s ease both}
+  .savebox .inner{
+    background:rgba(14,22,46,.6);border:1px dashed rgba(180,205,240,.4);
+    border-radius:14px;padding:18px 20px}
+  .savebox .sdate{font-size:.72rem;letter-spacing:.15em;color:#8fb0d6;margin-bottom:8px}
+  .savebox textarea{
+    width:100%;min-height:70px;resize:vertical;border-radius:10px;padding:10px 12px;
+    background:rgba(255,255,255,.06);border:1px solid rgba(190,215,240,.35);
+    color:var(--ice);font-family:'Zen Kaku Gothic New';font-size:.82rem;line-height:1.7}
+  .savebox .sbtn{
+    margin-top:10px;font-size:.8rem;padding:9px 26px;border-radius:999px;cursor:pointer;
+    letter-spacing:.1em;background:rgba(200,225,250,.16);
+    border:1px solid rgba(190,215,240,.45);color:#e8f2ff;
+    font-family:'Zen Kaku Gothic New';transition:.25s}
+  .savebox .sbtn:hover{box-shadow:0 0 16px rgba(190,215,250,.35);color:#fff}
+  .savebox .sdone{font-size:.78rem;color:#bfe3c9;letter-spacing:.1em}
+
+  #recordsList{max-width:760px;margin:0 auto 60px;padding:0 16px}
+  .rec{
+    background:rgba(14,22,46,.6);border:1px solid rgba(170,200,235,.35);
+    border-radius:14px;padding:18px 20px;margin-bottom:16px;animation:rise .4s ease both}
+  .rec .rhead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .rec .rdate{font-size:.74rem;letter-spacing:.12em;color:#9fc0e4}
+  .rec .rtitle{font-size:.86rem;color:#fff;letter-spacing:.1em}
+  .rec .rcards{font-size:.76rem;line-height:1.9;color:#bcd7f2;margin-top:8px}
+  .rec .rmemo{font-size:.8rem;line-height:1.8;color:var(--silver);margin-top:8px;
+    padding-top:8px;border-top:1px dashed rgba(180,205,240,.3);white-space:pre-wrap}
+  .rec .rmemo::before{content:"― メモ";display:block;font-size:.64rem;
+    letter-spacing:.2em;color:var(--silver2);margin-bottom:3px}
+  .rec .roverall{font-size:.78rem;line-height:1.9;color:#cfe0f5;margin-top:8px;display:none}
+  .rec.openbody .roverall{display:block}
+  .rec .rbtns{display:flex;gap:8px;margin-top:12px}
+  .rec .rbtns button{
+    font-size:.68rem;padding:5px 14px;border-radius:999px;cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid rgba(190,215,240,.35);
+    color:#a8c4e4;font-family:'Zen Kaku Gothic New';transition:.2s}
+  .rec .rbtns button:hover{color:#fff}
+  .rec .rbtns .rdel:hover{color:#f6b8b8;border-color:rgba(240,170,170,.5)}
+  .norec{text-align:center;font-size:.8rem;color:#8fb0d6;letter-spacing:.15em;padding:30px 0}
+
 </style>
 </head>
 <body>
@@ -226,16 +379,70 @@
   <h1>TAROT</h1>
 </header>
 
-<p class="pray">占いたいことを思い浮かべながらタップしてください</p>
+<nav class="tabs">
+  <button id="tabFortune" class="tab on" onclick="switchTab('fortune')">占い</button>
+  <button id="tabLookup" class="tab" onclick="switchTab('lookup')">調べる</button>
+  <button id="tabRecords" class="tab" onclick="switchTab('records')">記録</button>
+</nav>
 
-<div class="modes">
-  <button id="btn1" onclick="drawOne()">ワンオラクル</button>
-  <button id="btn3" onclick="drawThree()">スリーカード</button>
-  <button id="btnC" onclick="drawCeltic()">じっくりタロット</button>
+<!-- ============ 占いページ ============ -->
+<div id="page-fortune">
+  <p class="pray">占いたいことを思い浮かべながらタップしてください</p>
+
+  <div class="modes">
+    <button id="btn1" onclick="drawOne()">ワンオラクル</button>
+    <button id="btn3" onclick="drawThree()">スリーカード</button>
+    <button id="btnC" onclick="drawCeltic()">じっくりタロット</button>
+  </div>
+
+  <div id="board"></div>
+  <div id="overall"></div>
+  <div id="saveArea" class="savebox"></div>
 </div>
 
-<div id="board"></div>
-<div id="overall"></div>
+<!-- ============ 調べるページ ============ -->
+<div id="page-lookup" style="display:none">
+  <p class="pray">自分で引いたカードを配置して、意味を調べられます</p>
+
+  <div class="modes">
+    <button id="lkbtn1" onclick="lkTemplate('one')">ワンオラクル</button>
+    <button id="lkbtn3" onclick="lkTemplate('three')">スリーカード</button>
+    <button id="lkbtnC" onclick="lkTemplate('celtic')">ケルト十字</button>
+    <button id="lkbtnF" onclick="lkTemplate('free')">カスタム</button>
+  </div>
+
+  <div class="lk-tools" id="lkTools" style="display:none">
+    <button onclick="lkAddSlot()">＋ 枠を追加</button>
+    <button id="lkEditBtn" onclick="lkToggleEdit()">枠を編集</button>
+    <button onclick="lkClearAll()">カードを外す</button>
+  </div>
+
+  <div id="lkBoard"></div>
+  <div id="lkDetails" class="row"></div>
+  <div id="lkOverall"></div>
+  <div id="lkSaveArea" class="savebox"></div>
+</div>
+
+<!-- ============ 記録ページ ============ -->
+<div id="page-records" style="display:none">
+  <p class="pray">保存した占い・リーディングの記録(この端末のブラウザに保存されます)</p>
+  <div id="recordsList"></div>
+</div>
+
+<!-- ============ カード選択モーダル ============ -->
+<div id="pickerOverlay" onclick="pickerBgClose(event)">
+  <div id="picker">
+    <div class="picker-head">
+      <span class="ptitle" id="pickerTitle">カードを選ぶ</span>
+      <div class="dirsel">
+        <button id="dirUp" class="on" onclick="setPickDir('upright')">正位置</button>
+        <button id="dirRev" onclick="setPickDir('reversed')">逆位置</button>
+      </div>
+      <button class="picker-close" onclick="closePicker()">✕</button>
+    </div>
+    <div id="pickerGrid"></div>
+  </div>
+</div>
 
 <script>
 /* =====================================================
@@ -1012,6 +1219,7 @@ function reveal(i){
 function setup(items){
   draw = items; flipped = 0;
   overall.classList.remove('show'); overall.innerHTML = '';
+  clearSaveArea('saveArea');
   const main = items.filter(x=>!x.isKey)
     .map((x)=>faceDownHTML(items.indexOf(x), false, x.pos)).join('');
   const keyIdx = items.findIndex(x=>x.isKey);
@@ -1070,6 +1278,7 @@ function drawCeltic(){
   draw = p.map((c,i)=>({card:c, dir:flip(), pos:`${i+1}. ${CELTIC_LABELS[i]}`, isKey:false}));
   flipped = 10;
   overall.classList.remove('show'); overall.innerHTML = '';
+  clearSaveArea('saveArea');
 
   /* 盤面(十字) 全部伏せた状態で配置 */
   const boardHTML =
@@ -1153,6 +1362,7 @@ function showCelticOverall(){
     `10枚をひとつの物語として眺めたとき、どこか一箇所、胸に引っかかる場所があるはずです。そこが、今のあなたにとっての本題です。`;
   overall.innerHTML = `<div class="panel"><h2>READING</h2><p>${text}</p></div>`;
   overall.classList.add('show');
+  showSaveUI('saveArea', 'fortune', text);
 }
 
 function setActive(id){
@@ -1183,6 +1393,7 @@ function showOverall(){
   }
   overall.innerHTML = `<div class="panel"><h2>READING</h2><p>${text}</p></div>`;
   overall.classList.add('show');
+  showSaveUI('saveArea', 'fortune', text);
 }
 
 /* 背景のきらめき */
@@ -1194,6 +1405,293 @@ for(let i=0;i<40;i++){
   document.body.appendChild(s);
 }
 const sh=document.createElement('div');sh.className='shooting';document.body.appendChild(sh);
+
+/* =====================================================
+   ここから追加機能:タブ / 調べる / 保存・記録
+===================================================== */
+
+/* ===== タブ切り替え ===== */
+function switchTab(t){
+  const pages = {fortune:'page-fortune', lookup:'page-lookup', records:'page-records'};
+  const tabs  = {fortune:'tabFortune',  lookup:'tabLookup',  records:'tabRecords'};
+  Object.keys(pages).forEach(k=>{
+    document.getElementById(pages[k]).style.display = (k===t)?'':'none';
+    document.getElementById(tabs[k]).classList.toggle('on', k===t);
+  });
+  if(t==='records') renderRecords();
+}
+
+/* ===== 調べるモード ===== */
+const LK_TEMPLATES = {
+  one:   ['メインカード'],
+  three: ['状況','障害','アドバイス'],
+  celtic:['1. 現状','2. 障害','3. 顕在意識','4. 潜在意識','5. 過去',
+          '6. 近未来','7. 自分の立場','8. 周囲の状況','9. 願望と恐れ','10. 最終結果'],
+  free:  ['枠 1','枠 2','枠 3']
+};
+const LK_TITLES = {one:'ワンオラクル', three:'スリーカード', celtic:'ケルト十字', free:'カスタム'};
+
+let lkSlots = [];        // {label, cardId(null可), dir}
+let lkMode  = null;
+let lkEdit  = false;
+let lkPickIdx = -1;
+let lkPickDir = 'upright';
+
+function lkTemplate(mode){
+  lkMode = mode;
+  const ids = {one:'lkbtn1', three:'lkbtn3', celtic:'lkbtnC', free:'lkbtnF'};
+  document.querySelectorAll('#page-lookup .modes button').forEach(b=>b.classList.remove('on'));
+  document.getElementById(ids[mode]).classList.add('on');
+  lkSlots = LK_TEMPLATES[mode].map(l=>({label:l, cardId:null, dir:'upright'}));
+  lkEdit = (mode==='free');
+  document.getElementById('lkTools').style.display = '';
+  updateEditBtn();
+  renderLk();
+}
+
+function lkAddSlot(){
+  if(!lkMode) return;
+  lkSlots.push({label:'枠 '+(lkSlots.length+1), cardId:null, dir:'upright'});
+  renderLk();
+}
+function lkToggleEdit(){
+  lkEdit = !lkEdit; updateEditBtn(); renderLk();
+}
+function updateEditBtn(){
+  const b = document.getElementById('lkEditBtn');
+  if(b) b.classList.toggle('on', lkEdit);
+}
+function lkClearAll(){
+  lkSlots.forEach(s=>{s.cardId=null; s.dir='upright';});
+  renderLk();
+}
+function lkMove(i, d){
+  const j = i + d;
+  if(j < 0 || j >= lkSlots.length) return;
+  [lkSlots[i], lkSlots[j]] = [lkSlots[j], lkSlots[i]];
+  renderLk();
+}
+function lkDelete(i){
+  lkSlots.splice(i,1);
+  renderLk();
+}
+function lkRemoveCard(i, ev){
+  if(ev) ev.stopPropagation();
+  lkSlots[i].cardId = null;
+  renderLk();
+}
+function lkLabelChange(i, el){
+  lkSlots[i].label = el.value || ('枠 '+(i+1));
+  renderLkDetails();   /* 枠は再描画しない(入力中のフォーカスを守る) */
+}
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function renderLk(){
+  const boardEl = document.getElementById('lkBoard');
+  if(!lkMode){ boardEl.innerHTML=''; return; }
+  const html = lkSlots.map((s,i)=>{
+    const card = s.cardId===null ? null : CARDS.find(c=>c.id===s.cardId);
+    const isRev = s.dir==='reversed';
+    const frame = card
+      ? `<div class="lkframe filled ${isRev?'frev':''}" onclick="openPicker(${i})">
+           <img src="img/${card.id}.png" alt="" onerror="this.style.display='none'">
+           <span class="fdir ${isRev?'rev':''}">${isRev?'逆':'正'}</span>
+           <div class="fname">${card.name}</div>
+         </div>`
+      : `<div class="lkframe" onclick="openPicker(${i})">
+           <div class="plus">＋</div><div class="tapmsg">タップして選ぶ</div>
+         </div>`;
+    const label = lkEdit
+      ? `<input class="slabel-in" value="${esc(s.label)}" onchange="lkLabelChange(${i},this)">`
+      : `<div class="slabel">${esc(s.label)}</div>`;
+    const ctl = lkEdit
+      ? `<div class="lkctl">
+           <button onclick="lkMove(${i},-1)">◀</button>
+           <button onclick="lkMove(${i},1)">▶</button>
+           ${card?`<button onclick="lkRemoveCard(${i},event)">外す</button>`:''}
+           <button onclick="lkDelete(${i})">✕枠</button>
+         </div>`
+      : (card?`<div class="lkctl"><button onclick="lkRemoveCard(${i},event)">外す</button></div>`:'');
+    return `<div class="lkslot">${label}${frame}${ctl}</div>`;
+  }).join('');
+  boardEl.innerHTML = `<div class="lkgrid">${html}</div>`;
+  renderLkDetails();
+}
+
+function renderLkDetails(){
+  const det = document.getElementById('lkDetails');
+  const ov  = document.getElementById('lkOverall');
+  const filled = lkSlots.filter(s=>s.cardId!==null);
+  det.innerHTML = lkSlots.map(s=>{
+    if(s.cardId===null) return '';
+    const card = CARDS.find(c=>c.id===s.cardId);
+    return `<div class="tcard open rise">${faceHTML({card:card, dir:s.dir, pos:esc(s.label), isKey:false})}</div>`;
+  }).join('');
+
+  clearSaveArea('lkSaveArea');
+  if(lkSlots.length > 0 && filled.length === lkSlots.length){
+    const text = lkOverallText();
+    ov.innerHTML = `<div class="panel"><h2>READING</h2><p>${text}</p></div>`;
+    ov.classList.add('show');
+    showSaveUI('lkSaveArea', 'lookup', text);
+  } else {
+    ov.classList.remove('show'); ov.innerHTML='';
+  }
+}
+
+function lkOverallText(){
+  const parts = lkSlots.map(s=>{
+    const card = CARDS.find(c=>c.id===s.cardId);
+    const m = card[s.dir];
+    return `「${esc(s.label)}」に置かれたのは「${card.name}(${dirLabel(s.dir)})」。${m.summary}を告げています。`;
+  });
+  return parts.join('') +
+    `並べたカードをひとつの物語として眺めたとき、どこか一箇所、胸に引っかかる場所があるはずです。そこが、今のあなたにとっての本題です。`;
+}
+
+/* ===== カード選択モーダル ===== */
+const SUIT_SECTIONS = [
+  {key:'major',     name:'大アルカナ',  test:c=>c.arcana==='major'},
+  {key:'wands',     name:'ワンド',      test:c=>c.suit==='wands'},
+  {key:'cups',      name:'カップ',      test:c=>c.suit==='cups'},
+  {key:'swords',    name:'ソード',      test:c=>c.suit==='swords'},
+  {key:'pentacles', name:'ペンタクル',  test:c=>c.suit==='pentacles'}
+];
+
+function openPicker(i){
+  lkPickIdx = i;
+  document.getElementById('pickerTitle').textContent =
+    `「${lkSlots[i].label}」のカードを選ぶ`;
+  setPickDir(lkSlots[i].cardId!==null ? lkSlots[i].dir : 'upright');
+  const grid = document.getElementById('pickerGrid');
+  grid.innerHTML = SUIT_SECTIONS.map(sec=>{
+    const cells = CARDS.filter(sec.test).map(c=>
+      `<div class="pcard" onclick="pickCard(${c.id})">
+         <div class="pthumb">
+           <img src="img/${c.id}.png" alt="" loading="lazy"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+           <div class="pfall">${c.name}</div>
+         </div>
+         <div class="pnm">${c.name}</div>
+       </div>`).join('');
+    return `<div class="psec">${sec.name}</div><div class="pcards">${cells}</div>`;
+  }).join('');
+  document.getElementById('pickerOverlay').classList.add('show');
+}
+function setPickDir(d){
+  lkPickDir = d;
+  document.getElementById('dirUp').classList.toggle('on', d==='upright');
+  document.getElementById('dirRev').classList.toggle('on', d==='reversed');
+}
+function pickCard(id){
+  if(lkPickIdx < 0) return;
+  lkSlots[lkPickIdx].cardId = id;
+  lkSlots[lkPickIdx].dir = lkPickDir;
+  closePicker();
+  renderLk();
+}
+function closePicker(){
+  document.getElementById('pickerOverlay').classList.remove('show');
+  lkPickIdx = -1;
+}
+function pickerBgClose(ev){
+  if(ev.target === document.getElementById('pickerOverlay')) closePicker();
+}
+
+/* ===== 保存・記録 ===== */
+const REC_KEY = 'tarotRecords';
+function loadRecords(){
+  try{ return JSON.parse(localStorage.getItem(REC_KEY) || '[]'); }
+  catch(e){ return []; }
+}
+function persistRecords(a){
+  try{ localStorage.setItem(REC_KEY, JSON.stringify(a)); return true; }
+  catch(e){ return false; }
+}
+function nowStr(){
+  const d = new Date(), z = n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}/${z(d.getMonth()+1)}/${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`;
+}
+
+function clearSaveArea(id){
+  const el = document.getElementById(id);
+  if(el){ el.classList.remove('show'); el.innerHTML=''; }
+}
+
+/* mode: 'fortune'(draw配列を保存) / 'lookup'(lkSlotsを保存) */
+function showSaveUI(areaId, mode, overallText){
+  const area = document.getElementById(areaId);
+  if(!area) return;
+  area.dataset.overall = overallText;
+  area.dataset.mode = mode;
+  area.innerHTML =
+    `<div class="inner">
+       <div class="sdate">${nowStr()} の記録として保存できます</div>
+       <textarea placeholder="メモ(占った内容、感じたことなど)"></textarea>
+       <div><button class="sbtn" onclick="saveReading('${areaId}')">この結果を保存する</button></div>
+     </div>`;
+  area.classList.add('show');
+}
+
+function saveReading(areaId){
+  const area = document.getElementById(areaId);
+  const memo = area.querySelector('textarea').value.trim();
+  const mode = area.dataset.mode;
+  let title, cards;
+  if(mode === 'fortune'){
+    title = draw.length===2 ? 'ワンオラクル' : draw.length===4 ? 'スリーカード' : 'じっくりタロット';
+    cards = draw.map(x=>({pos:x.pos, name:x.card.name, dir:x.dir}));
+  } else {
+    title = '調べる:' + (LK_TITLES[lkMode] || 'カスタム');
+    cards = lkSlots.filter(s=>s.cardId!==null).map(s=>{
+      const c = CARDS.find(cc=>cc.id===s.cardId);
+      return {pos:s.label, name:c.name, dir:s.dir};
+    });
+  }
+  const recs = loadRecords();
+  recs.unshift({
+    id: Date.now(),
+    date: nowStr(),
+    title: title,
+    memo: memo,
+    cards: cards,
+    overall: area.dataset.overall || ''
+  });
+  const ok = persistRecords(recs);
+  area.innerHTML = ok
+    ? `<div class="inner"><span class="sdone">✦ 保存しました ─ 「記録」タブから見返せます</span></div>`
+    : `<div class="inner"><span class="sdone" style="color:#f6b8b8">保存できませんでした(ブラウザの保存領域を確認してください)</span></div>`;
+}
+
+function renderRecords(){
+  const list = document.getElementById('recordsList');
+  const recs = loadRecords();
+  if(recs.length === 0){
+    list.innerHTML = `<div class="norec">まだ記録はありません</div>`;
+    return;
+  }
+  list.innerHTML = recs.map(r=>{
+    const cardsLine = r.cards.map(c=>`${esc(c.pos)}:${esc(c.name)}(${c.dir==='reversed'?'逆':'正'})`).join(' ／ ');
+    return `<div class="rec" id="rec${r.id}">
+      <div class="rhead"><span class="rdate">${esc(r.date)}</span><span class="rtitle">${esc(r.title)}</span></div>
+      <div class="rcards">${cardsLine}</div>
+      ${r.memo ? `<div class="rmemo">${esc(r.memo)}</div>` : ''}
+      <div class="roverall">${esc(r.overall)}</div>
+      <div class="rbtns">
+        <button onclick="document.getElementById('rec${r.id}').classList.toggle('openbody')">解説を開閉</button>
+        <button class="rdel" onclick="deleteRecord(${r.id})">削除</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function deleteRecord(id){
+  if(!confirm('この記録を削除しますか?')) return;
+  persistRecords(loadRecords().filter(r=>r.id!==id));
+  renderRecords();
+}
+
 </script>
 </body>
 </html>
