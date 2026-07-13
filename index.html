@@ -1735,7 +1735,7 @@ function lkExplainText(){
   return lkSlots.filter(s=>s.cardId!==null).map(s=>{
     const card = CARDS.find(c=>c.id===s.cardId);
     const m = card[s.dir];
-    return `【${s.label}】${card.name}(${dirLabel(s.dir)})\n意味:${m.keywords}\n${m.text}`;
+    return `【${s.label}】${card.name}(${dirLabel(s.dir)})\n意味:${m.keywords}`;
   }).join('\n\n');
 }
 
