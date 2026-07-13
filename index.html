@@ -238,10 +238,17 @@
     animation:rise .4s ease both}
   .lkslot .slabel{font-size:.68rem;letter-spacing:.12em;color:#8fb0d6;text-align:center;
     min-height:2.2em;display:flex;align-items:center;justify-content:center;line-height:1.4}
-  .lkslot input.slabel-in{
-    width:100%;font-size:.7rem;text-align:center;padding:4px 6px;border-radius:6px;
-    background:rgba(255,255,255,.06);border:1px solid rgba(190,215,240,.4);
-    color:var(--ice);font-family:'Zen Kaku Gothic New'}
+  input.slabel-in{
+    width:100%;font-size:.7rem;text-align:center;padding:3px 2px;
+    background:transparent;border:none;
+    border-bottom:1px dashed rgba(180,205,240,.3);border-radius:0;
+    color:#a8c4e4;letter-spacing:.1em;font-family:'Zen Kaku Gothic New';
+    transition:.25s;outline:none;cursor:text}
+  input.slabel-in:hover{color:#dcebfc;border-bottom-color:rgba(200,225,255,.55)}
+  input.slabel-in:focus{color:#fff;border-bottom-style:solid;
+    border-bottom-color:rgba(210,235,255,.85);
+    text-shadow:0 0 10px rgba(170,210,255,.5)}
+  input.slabel-in::placeholder{color:#5f7ba3}
   .lkframe{
     width:100px;height:150px;border-radius:10px;cursor:pointer;position:relative;
     border:1.5px dashed rgba(170,205,245,.5);
@@ -337,6 +344,15 @@
     background:rgba(14,22,46,.6);border:1px dashed rgba(180,205,240,.4);
     border-radius:14px;padding:18px 20px}
   .savebox .sdate{font-size:.72rem;letter-spacing:.15em;color:#8fb0d6;margin-bottom:8px}
+  .savebox input.stitle{
+    display:block;width:100%;font-size:.85rem;padding:6px 2px;margin-bottom:10px;
+    background:transparent;border:none;
+    border-bottom:1px dashed rgba(180,205,240,.35);
+    color:#e8f2ff;letter-spacing:.12em;font-family:'Zen Kaku Gothic New';
+    transition:.25s;outline:none}
+  .savebox input.stitle:focus{border-bottom-style:solid;
+    border-bottom-color:rgba(210,235,255,.85);color:#fff}
+  .savebox input.stitle::placeholder{color:#5f7ba3}
   .savebox textarea{
     width:100%;min-height:70px;resize:vertical;border-radius:10px;padding:10px 12px;
     background:rgba(255,255,255,.06);border:1px solid rgba(190,215,240,.35);
@@ -1479,6 +1495,7 @@ const LK_TITLES = {one:'ワンオラクル', three:'スリーカード', celtic:
 
 let lkSlots = [];      // {label, cardId(null可), dir, xPct, yPct}
 let lkMode  = null;
+let lkLayoutName = '';   // 読み込み中のカスタム配置名
 let lkPickIdx = -1;
 let lkPickDir = 'upright';
 
@@ -1488,6 +1505,7 @@ function lkTemplate(mode){
   document.querySelectorAll('#page-lookup .modes button').forEach(b=>b.classList.remove('on'));
   document.getElementById(ids[mode]).classList.add('on');
 
+  lkLayoutName = '';
   if(mode === 'free'){
     lkSlots = [0,1,2].map(i=>lkNewSlot(i));
   } else {
@@ -1731,7 +1749,7 @@ function lkSaveLayout(){
     name: name.trim(),
     slots: lkSlots.map(s=>({label:s.label, xPct:s.xPct||0, yPct:s.yPct||0}))
   });
-  if(persistLayouts(lays)){ renderTools(); alert('配置を保存しました'); }
+  if(persistLayouts(lays)){ lkLayoutName = name.trim(); renderTools(); alert('配置を保存しました'); }
   else alert('保存できませんでした');
 }
 function lkLoadLayout(){
@@ -1741,6 +1759,7 @@ function lkLoadLayout(){
   if(!lay) return;
   lkSlots = lay.slots.map(s=>({label:s.label, cardId:null, dir:'upright',
     xPct:s.xPct, yPct:s.yPct}));
+  lkLayoutName = lay.name;
   renderLk();
 }
 function lkDeleteLayout(){
@@ -1827,9 +1846,14 @@ function showSaveUI(areaId, mode, overallText){
   if(!area) return;
   area.dataset.overall = overallText;
   area.dataset.mode = mode;
+  const titleInput = mode === 'lookup'
+    ? `<input class="stitle" placeholder="スプレッド名(タップで入力)"
+         value="${esc(lkLayoutName || LK_TITLES[lkMode] || '')}">`
+    : '';
   area.innerHTML =
     `<div class="inner">
        <div class="sdate">${nowStr()} の記録として保存できます</div>
+       ${titleInput}
        <textarea placeholder="メモ(占った内容、感じたことなど)"></textarea>
        <div><button class="sbtn" onclick="saveReading('${areaId}')">この結果を保存する</button></div>
      </div>`;
@@ -1845,7 +1869,9 @@ function saveReading(areaId){
     title = draw.length===2 ? 'ワンオラクル' : draw.length===4 ? 'スリーカード' : 'じっくりタロット';
     cards = draw.map(x=>({pos:x.pos, name:x.card.name, dir:x.dir}));
   } else {
-    title = '調べる:' + (LK_TITLES[lkMode] || 'カスタム');
+    const tIn = area.querySelector('input.stitle');
+    const tVal = tIn ? tIn.value.trim() : '';
+    title = '調べる:' + (tVal || lkLayoutName || LK_TITLES[lkMode] || 'カスタム');
     cards = lkSlots.filter(s=>s.cardId!==null).map(s=>{
       const c = CARDS.find(cc=>cc.id===s.cardId);
       return {pos:s.label, name:c.name, dir:s.dir};
