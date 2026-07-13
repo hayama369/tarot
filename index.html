@@ -377,7 +377,8 @@
     padding-top:8px;border-top:1px dashed rgba(180,205,240,.3);white-space:pre-wrap}
   .rec .rmemo::before{content:"― メモ";display:block;font-size:.64rem;
     letter-spacing:.2em;color:var(--silver2);margin-bottom:3px}
-  .rec .roverall{font-size:.78rem;line-height:1.9;color:#cfe0f5;margin-top:8px;display:none}
+  .rec .roverall{font-size:.78rem;line-height:1.9;color:#cfe0f5;margin-top:8px;display:none;
+    white-space:pre-wrap}
   .rec.openbody .roverall{display:block}
   .rec .rbtns{display:flex;gap:8px;margin-top:12px}
   .rec .rbtns button{
@@ -1725,8 +1726,17 @@ function renderLkDetails(){
   clearSaveArea('lkSaveArea');
   const filled = lkSlots.filter(s=>s.cardId!==null);
   if(filled.length > 0){
-    showSaveUI('lkSaveArea', 'lookup', '');
+    showSaveUI('lkSaveArea', 'lookup', lkExplainText());
   }
+}
+
+/* 置かれたカードの解説文(記録用) */
+function lkExplainText(){
+  return lkSlots.filter(s=>s.cardId!==null).map(s=>{
+    const card = CARDS.find(c=>c.id===s.cardId);
+    const m = card[s.dir];
+    return `【${s.label}】${card.name}(${dirLabel(s.dir)})\n意味:${m.keywords}\n${m.text}`;
+  }).join('\n\n');
 }
 
 /* ---- カスタム配置の保存/読込 ---- */
