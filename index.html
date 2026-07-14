@@ -440,47 +440,6 @@
     .lkmini{width:64px;height:96px}
   }
 
-
-  /* ===== ワンオラクル/スリーカード用フリップカード ===== */
-  .fcard{width:190px;height:290px;perspective:800px;position:relative;
-    animation:rise .5s ease both}
-  .fcard .flip-inner{position:relative;width:100%;height:100%;
-    transition:transform .7s cubic-bezier(.4,.1,.2,1);transform-style:preserve-3d}
-  .fcard.flipped .flip-inner{transform:rotateY(180deg)}
-  .fface{position:absolute;inset:0;border-radius:14px;overflow:hidden;
-    backface-visibility:hidden;-webkit-backface-visibility:hidden;
-    border:1px solid rgba(200,220,245,.5);
-    box-shadow:0 6px 22px rgba(0,10,40,.55)}
-  .fback{
-    background:
-      radial-gradient(circle at 22% 28%, rgba(255,255,255,.14) 0 1.4px, transparent 2px),
-      radial-gradient(circle at 74% 18%, rgba(255,255,255,.12) 0 1px, transparent 1.8px),
-      radial-gradient(circle at 60% 66%, rgba(255,255,255,.1) 0 1.2px, transparent 2px),
-      radial-gradient(circle at 32% 82%, rgba(255,255,255,.12) 0 1px, transparent 1.8px),
-      radial-gradient(circle at 85% 78%, rgba(255,255,255,.1) 0 1.3px, transparent 2px),
-      linear-gradient(160deg,#101c3e,#1a2c58 60%,#22355f);
-    display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px}
-  .fback .glyph{font-size:1.7rem;color:#cfe2f8;text-shadow:0 0 14px rgba(180,215,255,.8)}
-  .fback .poslabel{font-size:.66rem;letter-spacing:.24em;color:#8fb0d6;
-    text-align:center;padding:0 10px;line-height:1.6}
-  .ffront{transform:rotateY(180deg);background:rgba(10,20,45,.65)}
-  .ffront img{width:100%;height:100%;object-fit:cover;display:block}
-  .ffront.frev img{transform:rotate(180deg)}
-  .ffront .fname2{position:absolute;bottom:0;left:0;right:0;font-size:.74rem;
-    text-align:center;padding:7px 4px;background:rgba(5,12,30,.78);
-    color:#eaf3ff;letter-spacing:.08em;line-height:1.4}
-  .ffront .fdir2{position:absolute;top:6px;right:8px;font-size:.6rem;padding:2px 9px;
-    border-radius:999px;background:rgba(5,12,30,.8);
-    border:1px solid rgba(200,225,255,.4);color:#cfe2f8}
-  .ffront .fdir2.rev{color:#f0c8c8;border-color:rgba(240,180,180,.5)}
-  .fcard.fkey .fface{border-color:var(--silver);
-    box-shadow:0 0 24px rgba(215,230,248,.3)}
-  .fcard.flipped .fface{box-shadow:0 0 20px rgba(150,200,255,.4)}
-
-  @media (max-width:560px){
-    .fcard{width:150px;height:230px}
-  }
-
 </style>
 </head>
 <body>
@@ -1325,79 +1284,13 @@ function setup(items){
   draw = items; flipped = 0;
   overall.classList.remove('show'); overall.innerHTML = '';
   clearSaveArea('saveArea');
-
-  const fcardHTML = (x,i)=>{
-    const isRev = x.dir==='reversed';
-    return `<div class="fcard ${x.isKey?'fkey':''}" id="fcard${i}">
-      <div class="flip-inner">
-        <div class="fface fback">
-          <div class="glyph">✦</div>
-          <div class="poslabel">${x.isKey?'キーカード':x.pos}</div>
-        </div>
-        <div class="fface ffront ${isRev?'frev':''}">
-          <img src="img/${x.card.id}.png" alt="" onerror="this.style.display='none'">
-          <span class="fdir2 ${isRev?'rev':''}">${isRev?'逆位置':'正位置'}</span>
-          <div class="fname2">${x.card.name}</div>
-        </div>
-      </div>
-    </div>`;
-  };
-
-  const mains = items.map((x,i)=>x.isKey?'':fcardHTML(x,i)).join('');
+  const main = items.filter(x=>!x.isKey)
+    .map((x)=>faceDownHTML(items.indexOf(x), false, x.pos)).join('');
   const keyIdx = items.findIndex(x=>x.isKey);
   board.innerHTML =
-    `<div class="hint">心を静めて、準備ができたらカードを開いてください</div>
-     <div class="row">${mains}</div>
-     <div class="keywrap">${fcardHTML(items[keyIdx], keyIdx)}</div>
-     <div class="revealwrap">
-       <button id="btnReveal" onclick="revealAllSimple()">すべてのカードを開く</button>
-     </div>
-     <div id="fortuneDetails" class="row"></div>`;
-}
-
-/* ワンオラクル/スリーカード:順次フリップ開封 */
-function revealAllSimple(){
-  const btn = document.getElementById('btnReveal');
-  if(!btn || btn.disabled) return;
-  btn.disabled = true;
-
-  const n = draw.length;
-  const flipInterval = 400, flipDuration = 700;
-
-  for(let i = 0; i < n; i++){
-    setTimeout(() => {
-      const el = document.getElementById('fcard'+i);
-      if(el) el.classList.add('flipped');
-    }, i * flipInterval);
-  }
-
-  const detailStart = n * flipInterval + flipDuration;
-  const details = document.getElementById('fortuneDetails');
-  for(let i = 0; i < n; i++){
-    setTimeout(() => {
-      const cardEl = document.createElement('div');
-      cardEl.className = 'tcard open' + (draw[i].isKey ? ' key' : '');
-      cardEl.innerHTML = faceHTML(draw[i]);
-      cardEl.style.opacity = '0';
-      cardEl.style.transform = 'translateY(12px)';
-      details.appendChild(cardEl);
-      requestAnimationFrame(() => {
-        cardEl.style.transition = 'opacity .45s ease, transform .45s ease';
-        cardEl.style.opacity = '1';
-        cardEl.style.transform = 'none';
-      });
-    }, detailStart + i * 140);
-  }
-
-  setTimeout(() => {
-    const wrap = btn.parentElement;
-    if(wrap){
-      wrap.style.transition = 'opacity .5s ease';
-      wrap.style.opacity = '0';
-      setTimeout(()=>wrap.remove(), 500);
-    }
-    showOverall();
-  }, detailStart + n * 140 + 400);
+    `<div class="hint">カードをタップしてめくってください</div>
+     <div class="row">${main}</div>
+     <div class="keywrap">${faceDownHTML(keyIdx, true, 'キーカード')}</div>`;
 }
 
 function drawOne(){
