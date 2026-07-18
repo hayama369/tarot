@@ -1549,8 +1549,7 @@ function showCelticOverall(){
     `ここまでの経緯として${nm(4)}は${g(4).summary}を物語り、この流れのままいけば、近い未来は${nm(5)}が示す${g(5).summary}へ向かいます。`+
     `あなた自身の立ち位置は${nm(6)}(${g(6).summary})、周囲の状況は${nm(7)}(${g(7).summary})。`+
     `心の底にある願いと恐れを映すのは${nm(8)}で、${g(8).summary}がその正体です。`+
-    `そしてこの読み全体の到達点として、${nm(9)}が${g(9).summary}を告げています。`+
-    `10枚をひとつの物語として眺めたとき、どこか一箇所、胸に引っかかる場所があるはずです。そこが、今のあなたにとっての本題です。`;
+    `そしてこの読み全体の到達点として、${nm(9)}が${g(9).summary}を告げています。`;
   overall.innerHTML = `<div class="panel"><h2>READING</h2><p>${text}</p></div>`;
   overall.classList.add('show');
   showSaveUI('saveArea', 'fortune', text);
@@ -1571,7 +1570,7 @@ function showOverall(){
     text =
       `今日の中心にあるのは「${m.card.name}(${dirLabel(m.dir)})」。${mm.summary}──それがこの一枚のメッセージです。`+
       `そこに、鍵として「${k.card.name}(${dirLabel(k.dir)})」が添えられました。${km.summary}という視点を重ねると、メインカードの意味はより立体的になります。`+
-      `${km.keyHint}二枚をひとつの絵として眺めたとき、心に最初に浮かんだ言葉を、今日の合言葉にしてみてください。`;
+      `${km.keyHint}`;
   } else {
     const [a,b,c,k] = draw;
     const am=a.card[a.dir], bm=b.card[b.dir], cm=c.card[c.dir], km=k.card[k.dir];
@@ -1579,8 +1578,7 @@ function showOverall(){
       `まず状況。「${a.card.name}(${dirLabel(a.dir)})」が示すのは、${am.summary}。ここがこの読みの出発点です。`+
       `次に障害。「${b.card.name}(${dirLabel(b.dir)})」が指しているのは、${bm.summary}。流れを重くしているのは、おそらくこの部分です。`+
       `そしてアドバイスの「${c.card.name}(${dirLabel(c.dir)})」。${cm.summary}という位置から、次の一手を考えてみてください。`+
-      `最後に、全体を読み解く鍵となる「${k.card.name}(${dirLabel(k.dir)})」は、${km.summary}を告げています。${km.keyHint}`+
-      `三枚と鍵をひとつの物語として繋げたとき、どこか一箇所、胸に引っかかる場所があるはずです。そこが、今のあなたにとっての本題です。`;
+      `最後に、全体を読み解く鍵となる「${k.card.name}(${dirLabel(k.dir)})」は、${km.summary}を告げています。${km.keyHint}`;
   }
   overall.innerHTML = `<div class="panel"><h2>READING</h2><p>${text}</p></div>`;
   overall.classList.add('show');
